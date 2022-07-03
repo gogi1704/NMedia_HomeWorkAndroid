@@ -2,52 +2,42 @@ package com.example.nmedia
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.example.nmedia.databinding.ActivityMainBinding
+import com.example.nmedia.viewModels.PostViewModel
 
 class MainActivity : AppCompatActivity() {
-   private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val post = Post(0, "Netology", "22.04.2022", " TRA TA TA TA Ta", 12999, 120999, 999_999)
-        with(binding) {
-            textTitle.text = post.title
-            textContent.text = post.content
-            textDate.text = post.date
-            textLikesCount.text = showCounts(post.likes)
-            textShareCount.text = showCounts(post.shares)
-            textShowsCount.text = showCounts(post.shows)
+        val viewModel by viewModels<PostViewModel>()
+        viewModel.data.observe(this) { post ->
+            with(binding) {
+                textTitle.text = post.title
+                textContent.text = post.content
+                textDate.text = post.date
+                textLikesCount.text = showCounts(post.likes)
+                textShareCount.text = showCounts(post.shares)
+                textShowsCount.text = showCounts(post.shows)
+                val isLiked = if (post.isLiked) R.drawable.ic_like_true_24
+                else R.drawable.ic_like_false_24
+                imageLike.setImageResource(isLiked)
 
-            imageLike.setOnClickListener() {
-                likePost(post)
             }
-
-            binding.imageShare.setOnClickListener {
-                post.shares++
-                binding.textShareCount.text = showCounts(post.shares)
-            }
-
         }
 
-
-    }
-
-    private fun likePost(post: Post) {
-        if (!post.isLiked) {
-            post.likes++
-            binding.imageLike.setImageResource(R.drawable.ic_like_true_24)
-            binding.textLikesCount.text = showCounts(post.likes)
-            post.isLiked = true
-        } else if (post.isLiked) {
-            post.likes--
-            binding.imageLike.setImageResource(R.drawable.ic_like_false_24)
-            binding.textLikesCount.text = showCounts(post.likes)
-            post.isLiked = false
+        binding.imageLike.setOnClickListener() {
+            viewModel.like()
         }
-    }
 
+        binding.imageShare.setOnClickListener {
+            viewModel.share()
+        }
+
+    }
 
 }
 
