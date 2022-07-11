@@ -14,18 +14,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val viewModel:PostViewModel by viewModels()
+        val viewModel: PostViewModel by viewModels()
         val recycler = binding.recyclerListPosts
         val adapter = PostsAdapter(
             { viewModel.like(it.id) },
-            {viewModel.share(it.id)}
+            { viewModel.share(it.id) }
         )
         recycler.adapter = adapter
 
         viewModel.data.observe(this) { posts ->
-            adapter.submitList(posts.map { post -> post.copy()  })
-            println(posts)
-
+            adapter.submitList(posts.map { post -> post.copy() })
         }
     }
 }
