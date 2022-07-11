@@ -3,7 +3,6 @@ package com.example.nmedia
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.example.nmedia.adapter.PostsAdapter
 import com.example.nmedia.databinding.ActivityMainBinding
 import com.example.nmedia.viewModels.PostViewModel
@@ -24,8 +23,10 @@ class MainActivity : AppCompatActivity() {
         )
         recycler.adapter = adapter
 
-        viewModel.data.observe(this) {
-            adapter.update()
+        viewModel.data.observe(this) { posts ->
+            adapter.update(posts)
+            println(posts)
+
         }
     }
 }

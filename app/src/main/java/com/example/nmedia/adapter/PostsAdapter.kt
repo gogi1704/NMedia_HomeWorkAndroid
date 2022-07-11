@@ -1,13 +1,12 @@
 package com.example.nmedia.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
-import com.example.nmedia.viewModels.PostRepository
 import com.example.nmedia.viewModels.PostViewModel
 
 
@@ -17,29 +16,30 @@ typealias OnShareListener = (post: Post) -> Unit
 class PostsAdapter(
     private val onLikeListener: OnLikeListener,
     private val onShareListener: OnShareListener,
-      viewModel: PostViewModel
-) : RecyclerView.Adapter<PostsAdapter.PostsViewHolder>() {
+    viewModel: PostViewModel
+) : ListAdapter<Post, PostsAdapter.PostsViewHolder>(PostDiffCallback()) {
 
-    private var data = viewModel.data
+    private var data = viewModel.data.value
 
-    fun update() {
-    notifyDataSetChanged()
+
+    fun update(posts: List<Post>) {
+        submitList(posts)
+//         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding =
             ListItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return PostsViewHolder(binding, onLikeListener , onShareListener)
+        return PostsViewHolder(binding, onLikeListener, onShareListener)
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        holder.bind(data.value!![position])
+        val post = getItem(position)
+        holder.bind(post)
+
     }
 
-    override fun getItemCount(): Int {
-        return data.value!!.size
-    }
 
     class PostsViewHolder(
         private val binding: ListItemLayoutBinding,
