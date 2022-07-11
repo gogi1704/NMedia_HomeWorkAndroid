@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
-import com.example.nmedia.viewModels.PostViewModel
 
 
 typealias OnLikeListener = (post: Post) -> Unit
@@ -16,16 +15,7 @@ typealias OnShareListener = (post: Post) -> Unit
 class PostsAdapter(
     private val onLikeListener: OnLikeListener,
     private val onShareListener: OnShareListener,
-    viewModel: PostViewModel
 ) : ListAdapter<Post, PostsAdapter.PostsViewHolder>(PostDiffCallback()) {
-
-    private var data = viewModel.data.value
-
-
-    fun update(posts: List<Post>) {
-        submitList(posts)
-//         notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding =

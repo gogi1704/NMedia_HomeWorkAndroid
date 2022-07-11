@@ -18,13 +18,12 @@ class MainActivity : AppCompatActivity() {
         val recycler = binding.recyclerListPosts
         val adapter = PostsAdapter(
             { viewModel.like(it.id) },
-            {viewModel.share(it.id)},
-            viewModel
+            {viewModel.share(it.id)}
         )
         recycler.adapter = adapter
 
         viewModel.data.observe(this) { posts ->
-            adapter.update(posts)
+            adapter.submitList(posts.map { post -> post.copy()  })
             println(posts)
 
         }
