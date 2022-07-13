@@ -7,5 +7,7 @@ interface PostRepository {
     fun getData():MutableLiveData<MutableList<Post>>
     fun like(id:Int)
     fun share(id:Int)
+    fun remove(id: Int)
+    fun savePost(post: Post)
 
 }

@@ -2,26 +2,31 @@ package com.example.nmedia.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
 
+interface PostEventListener {
+    fun like(post: Post)
+    fun share(post: Post)
+    fun remove(post: Post)
+    fun update(post: Post)
+}
 
-typealias OnLikeListener = (post: Post) -> Unit
-typealias OnShareListener = (post: Post) -> Unit
 
 class PostsAdapter(
-    private val onLikeListener: OnLikeListener,
-    private val onShareListener: OnShareListener,
+    private val listener: PostEventListener
+
 ) : ListAdapter<Post, PostsAdapter.PostsViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding =
             ListItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return PostsViewHolder(binding, onLikeListener, onShareListener)
+        return PostsViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
@@ -32,9 +37,9 @@ class PostsAdapter(
 
 
     class PostsViewHolder(
+
         private val binding: ListItemLayoutBinding,
-        private val onLikeListener: OnLikeListener,
-        private val onShareListener: OnShareListener
+        private val listener: PostEventListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
@@ -48,11 +53,30 @@ class PostsAdapter(
                 else imageLike.setImageResource(R.drawable.ic_like_false_24)
 
                 imageLike.setOnClickListener {
-                    onLikeListener(post)
+                    listener.like(post)
                 }
 
                 imageShare.setOnClickListener {
-                    onShareListener(post)
+                    listener.share(post)
+                }
+                imageViewMore.setOnClickListener {
+                    PopupMenu(it.context, it).apply {
+                        inflate(R.menu.post_more)
+
+                        setOnMenuItemClickListener { itemView ->
+                            when (itemView.itemId) {
+                                R.id.remove -> {
+                                    listener.remove(post)
+                                    return@setOnMenuItemClickListener true
+                                }
+                                R.id.update -> {
+                                    listener.update(post)
+                                    return@setOnMenuItemClickListener true
+                                }
+                            }
+                            false
+                        }
+                    }.show()
                 }
             }
         }

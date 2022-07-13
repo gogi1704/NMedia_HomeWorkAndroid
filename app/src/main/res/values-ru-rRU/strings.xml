@@ -3,4 +3,7 @@
 
     <string name="app_name">Н-Медиа</string>
     <string name="main_text">Н-Медиа</string>
+    <string name="post_more_remove">Удалить</string>
+    <string name="post_more_update">Редактировать</string>
+    <string name="editText_hint">Создать контент для нового поста</string>
 </resources>

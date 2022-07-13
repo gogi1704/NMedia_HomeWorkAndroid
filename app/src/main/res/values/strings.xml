@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">NMedia</string>
     <string name="main_text">NMedia!</string>
+    <string name="post_more_remove">Remove</string>
+    <string name="post_more_update">Update</string>
+    <string name="editText_hint">Create post content</string>
 </resources>
