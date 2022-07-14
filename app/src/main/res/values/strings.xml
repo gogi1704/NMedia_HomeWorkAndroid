@@ -4,4 +4,5 @@
     <string name="post_more_remove">Remove</string>
     <string name="post_more_update">Update</string>
     <string name="editText_hint">Create post content</string>
+    <string name="edit_massage_Title">Edit massage</string>
 </resources>

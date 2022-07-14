@@ -6,4 +6,5 @@
     <string name="post_more_remove">Удалить</string>
     <string name="post_more_update">Редактировать</string>
     <string name="editText_hint">Создать контент для нового поста</string>
+    <string name="edit_massage_Title">Редактировать сообщение</string>
 </resources>
