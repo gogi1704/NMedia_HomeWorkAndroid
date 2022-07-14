@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 
 val emptyPost = Post(
-    id = 0,
+    id = -1,
     title = "",
     content = "",
     date = "",
@@ -32,6 +32,7 @@ class PostViewModel : ViewModel() {
         editedLiveData.value?.let {
             repository.savePost(it)
         }
+        editedLiveData.value = emptyPost
     }
 
     fun edit(post:Post) {
@@ -46,7 +47,7 @@ class PostViewModel : ViewModel() {
             if (trimContent == it.content) {
                 return
             }else{
-                editedLiveData.value = emptyPost.copy(content = trimContent )
+                editedLiveData.value = editedLiveData.value?.copy(content = trimContent )
             }
         }
     }

@@ -9,7 +9,7 @@ class InMemoryPostRepositoryImpl : PostRepository {
     private var posts =
         mutableListOf(
             Post(
-                1,
+                0,
                 "Anatomy",
                 "22.04.2022",
                 "WeatherAPI.com interactive API explorer",
@@ -18,7 +18,7 @@ class InMemoryPostRepositoryImpl : PostRepository {
                 999_999
             ),
             Post(
-                2,
+                1,
                 "Biology",
                 "22.04.2022",
                 "IO Docs allows you to test our APIs and method",
@@ -27,7 +27,7 @@ class InMemoryPostRepositoryImpl : PostRepository {
                 999_999
             ),
             Post(
-                3,
+                2,
                 "Biology",
                 "22.04.2022",
                 "and methods. It returns response he",
@@ -36,7 +36,7 @@ class InMemoryPostRepositoryImpl : PostRepository {
                 999_999
             ),
             Post(
-                4,
+                3,
                 "Biology",
                 "22.04.2022",
                 "It returns response headers, response code and response body.",
@@ -65,19 +65,25 @@ class InMemoryPostRepositoryImpl : PostRepository {
     }
 
     override fun remove(id: Int) {
-        posts = posts.filter { it.id != id }.toMutableList()
+        posts = posts.filter { it.id != id }
+            .mapIndexed { index, post -> post.copy(id = index) }.toMutableList()
+
         updateLiveData()
     }
 
     override fun savePost(post: Post) {
-        if (post.id == 0) {
-            posts = (mutableListOf(post.copy(id = posts.size )) + posts).toMutableList()
-        } else
-            posts.map {
-                if (it.id != post.id) it else it.copy(content = post.content)
-            }
+        if (post.id == -1) {
+            posts = (mutableListOf(post.copy()) + posts).toMutableList()
+            posts = posts.mapIndexed { index, postItem -> postItem.copy(id = index) }.toMutableList()
+        } else {
+            posts = posts.mapIndexed { index, itemPost ->
+                if (post.id != itemPost.id) itemPost.copy(id = index) else itemPost.copy(
+                    id = index,
+                    content = post.content
+                )
+            } as MutableList<Post>
+        }
         updateLiveData()
-
     }
 
     private fun updateLiveData() {

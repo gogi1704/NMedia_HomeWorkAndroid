@@ -2,6 +2,7 @@ package com.example.nmedia
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.nmedia.adapter.PostEventListener
@@ -20,23 +21,23 @@ class MainActivity : AppCompatActivity() {
         val viewModel: PostViewModel by viewModels()
         val recycler = binding.recyclerListPosts
         val adapter = PostsAdapter(
-           object :PostEventListener{
-               override fun like(post: Post) {
-                  viewModel.like(post.id)
-               }
+            object : PostEventListener {
+                override fun like(post: Post) {
+                    viewModel.like(post.id)
+                }
 
-               override fun share(post: Post) {
-                  viewModel.share(post.id)
-               }
+                override fun share(post: Post) {
+                    viewModel.share(post.id)
+                }
 
-               override fun remove(post: Post) {
-                   viewModel.remove(post.id)
-               }
+                override fun remove(post: Post) {
+                    viewModel.remove(post.id)
+                }
 
-               override fun update(post: Post) {
-                  viewModel.edit(post)
-               }
-           }
+                override fun update(post: Post) {
+                    viewModel.edit(post)
+                }
+            }
         )
         recycler.adapter = adapter
 
@@ -51,21 +52,36 @@ class MainActivity : AppCompatActivity() {
             viewModel.savePost()
             binding.editTextContent.clearFocus()
             AndroidUtils.hideKeyboard(binding.editTextContent)
+            binding.editableText.text = null
+            binding.editLayout.visibility = View.GONE
             binding.editTextContent.text = null
 
+        }
+
+        binding.buttonClear.setOnClickListener {
+            viewModel.savePost()
+            binding.editTextContent.clearFocus()
+            AndroidUtils.hideKeyboard(binding.editTextContent)
+            binding.editableText.text = null
+            binding.editTextContent.text = null
+            binding.editLayout.visibility = View.GONE
         }
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts.map { post -> post.copy() })
         }
 
-        viewModel.editedLiveData.observe(this){editPost->
-            if (editPost.id == 0){
+        viewModel.editedLiveData.observe(this) { editPost ->
+            if (editPost.id == -1) {
                 return@observe
-            }else
-            with(binding.editTextContent){
+            } else
+                binding.editLayout.visibility = View.VISIBLE
+                binding.editableText.text = editPost.content
+            with(binding.editTextContent) {
                 requestFocus()
+                AndroidUtils.showKeyboard(this)
                 setText(editPost.content)
             }
+
         }
     }
 }
