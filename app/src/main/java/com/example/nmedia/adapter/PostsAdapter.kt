@@ -49,10 +49,9 @@ class PostsAdapter(
                 textLikesCount.text = post.showCounts(post.likes)
                 textShareCount.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
-                if (post.isLiked) imageLike.setImageResource(R.drawable.ic_like_true_24)
-                else imageLike.setImageResource(R.drawable.ic_like_false_24)
+                checkBoxLike.isChecked = post.isLiked
 
-                imageLike.setOnClickListener {
+                checkBoxLike.setOnClickListener {
                     listener.like(post)
                 }
 
