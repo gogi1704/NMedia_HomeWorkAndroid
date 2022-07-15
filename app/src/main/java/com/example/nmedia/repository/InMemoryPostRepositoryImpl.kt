@@ -5,13 +5,46 @@ import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostRepository
 
 class InMemoryPostRepositoryImpl : PostRepository {
+
     private var posts =
         mutableListOf(
-            Post(0, "Netology", "22.04.2022", " TRA TA TA TA Ta", 12, 80, 999_999),
-            Post(1, "Anatomy", "22.04.2022", " Homo Sapiens", 12, 80, 999_999),
-            Post(2, "Biology", "22.04.2022", "Butterfly's ", 12, 80, 999_999)
+            Post(
+                0,
+                "Anatomy",
+                "22.04.2022",
+                "WeatherAPI.com interactive API explorer",
+                12,
+                80,
+                999_999
+            ),
+            Post(
+                1,
+                "Biology",
+                "22.04.2022",
+                "IO Docs allows you to test our APIs and method",
+                12,
+                80,
+                999_999
+            ),
+            Post(
+                2,
+                "Biology",
+                "22.04.2022",
+                "and methods. It returns response he",
+                12,
+                80,
+                999_999
+            ),
+            Post(
+                3,
+                "Biology",
+                "22.04.2022",
+                "It returns response headers, response code and response body.",
+                200,
+                80,
+                999_999
+            ),
         )
-
 
     private var data = MutableLiveData(posts)
 
@@ -23,16 +56,37 @@ class InMemoryPostRepositoryImpl : PostRepository {
         val like = if (!posts[id].isLiked) posts[id].likes + 1 else posts[id].likes - 1
         val post = posts[id].copy(isLiked = !posts[id].isLiked, likes = like)
         posts[id] = post
-        update()
+        updateLiveData()
     }
 
     override fun share(id: Int) {
         posts[id] = posts[id].copy(shares = posts[id].shares + 1)
-        update()
+        updateLiveData()
     }
 
+    override fun remove(id: Int) {
+        posts = posts.filter { it.id != id }
+            .mapIndexed { index, post -> post.copy(id = index) }.toMutableList()
 
-    private fun update() {
+        updateLiveData()
+    }
+
+    override fun savePost(post: Post) {
+        if (post.id == -1) {
+            posts = (mutableListOf(post.copy()) + posts).toMutableList()
+            posts = posts.mapIndexed { index, postItem -> postItem.copy(id = index) }.toMutableList()
+        } else {
+            posts = posts.mapIndexed { index, itemPost ->
+                if (post.id != itemPost.id) itemPost.copy(id = index) else itemPost.copy(
+                    id = index,
+                    content = post.content
+                )
+            } as MutableList<Post>
+        }
+        updateLiveData()
+    }
+
+    private fun updateLiveData() {
         data.value = posts
     }
 }
