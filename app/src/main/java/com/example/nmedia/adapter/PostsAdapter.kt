@@ -46,16 +46,16 @@ class PostsAdapter(
             with(binding) {
                 textTitle.text = post.title
                 textContent.text = post.content
-                textLikesCount.text = post.showCounts(post.likes)
-                textShareCount.text = post.showCounts(post.shares)
+                buttonShare.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
-                checkBoxLike.isChecked = post.isLiked
+                buttonLike.text = post.showCounts(post.likes)
+                buttonLike.isChecked = post.isLiked
 
-                checkBoxLike.setOnClickListener {
+                buttonLike.setOnClickListener {
                     listener.like(post)
                 }
 
-                imageShare.setOnClickListener {
+                buttonShare.setOnClickListener {
                     listener.share(post)
                 }
                 imageViewMore.setOnClickListener {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.AppTheme.TextButton.MyStyle_Like" parent="Widget.MaterialComponents.Button.TextButton">
+
+        <item name="backgroundTint">@color/like_background_selector</item>
+        <item name="iconTint">@color/like_icon_tint_selector</item>
+        <item name="android:textColor">@color/text_color_selector</item>
+    </style>
+
+    <style name="Widget.AppTheme.TextButton.MyStyle_Share" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/share_background_selector</item>
+        <item name="iconTint">@color/share_icon_tint_selector</item>
+        <item name="android:textColor">@color/text_color_selector</item>
+
+    </style>
+
+</resources>

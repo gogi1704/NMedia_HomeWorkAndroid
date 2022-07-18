@@ -20,5 +20,10 @@
     <color name="black">#000a12</color>
 
     <color name="like_red">#a30000</color>
+    <color name="like_red_alfa">#25A30000</color>
+    <color name="alfa_1000">#00A30000</color>
+    <color name="default_color">#6C6868</color>
+
+
 
 </resources>
