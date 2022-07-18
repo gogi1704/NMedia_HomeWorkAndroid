@@ -46,20 +46,19 @@ class PostsAdapter(
             with(binding) {
                 textTitle.text = post.title
                 textContent.text = post.content
-                textLikesCount.text = post.showCounts(post.likes)
-                textShareCount.text = post.showCounts(post.shares)
+                buttonLike.text = post.showCounts(post.likes)
+                buttonShare.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
-                if (post.isLiked) imageLike.setImageResource(R.drawable.ic_like_true_24)
-                else imageLike.setImageResource(R.drawable.ic_like_false_24)
+                buttonLike.isChecked = post.isLiked
 
-                imageLike.setOnClickListener {
+                buttonLike.setOnClickListener {
                     listener.like(post)
                 }
 
-                imageShare.setOnClickListener {
+                buttonShare.setOnClickListener {
                     listener.share(post)
                 }
-                imageViewMore.setOnClickListener {
+                buttonMore.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.post_more)
 

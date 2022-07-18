@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/imageView_icon"
@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_netology_48_foreground"
 
-        />
+        android:contentDescription="@string/avatar" />
 
     <TextView
 
@@ -25,7 +25,7 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/imageView_more"
+        app:layout_constraintEnd_toStartOf="@+id/button_more"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageView_icon"
         app:layout_constraintTop_toTopOf="@+id/imageView_icon"
@@ -37,19 +37,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
-        android:textSize="8sp"
+        android:textSize="11sp"
         app:layout_constraintStart_toEndOf="@+id/imageView_icon"
         app:layout_constraintTop_toBottomOf="@+id/text_title"
         tools:text="22.04.2022" />
 
-    <ImageView
-        android:id="@+id/imageView_more"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:icon="@drawable/ic_more_24"
         android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_more_24" />
+        style="@style/Widget.App.Button.OutlinedButton.IconOnly"/>
 
     <TextView
         android:id="@+id/text_content"
@@ -75,44 +76,33 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="text_content" />
 
-    <ImageView
-        android:id="@+id/image_like"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_like"
+        style="@style/Widget.Material3.Button.Like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        android:gravity="start|center"
+        app:icon="@drawable/ic_like_adaptive"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/text_content"
         app:layout_constraintTop_toBottomOf="@+id/barrier_content"
-        app:srcCompat="@drawable/ic_like_false_24" />
+        tools:text="12" />
 
-    <TextView
-        android:id="@+id/text_likes_count"
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share"
+        style="@style/Widget.Material3.Button.Share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        tools:text="118"
-        app:layout_constraintBottom_toBottomOf="@+id/image_like"
-        app:layout_constraintStart_toEndOf="@+id/image_like"
-        app:layout_constraintTop_toTopOf="@+id/image_like" />
+        android:checkable="false"
+        android:gravity="start|center"
+        app:icon="@drawable/ic_share_adaptive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_like"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_content"
+        tools:text="12" />
 
-    <ImageView
-        android:id="@+id/image_share"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_likes_count"
-        app:layout_constraintStart_toEndOf="@+id/text_likes_count"
-        app:layout_constraintTop_toTopOf="@+id/text_likes_count"
-        app:srcCompat="@drawable/ic_share_24" />
-
-    <TextView
-        android:id="@+id/text_share_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        tools:text="122"
-        app:layout_constraintBottom_toBottomOf="@+id/image_share"
-        app:layout_constraintStart_toEndOf="@+id/image_share"
-        app:layout_constraintTop_toTopOf="@+id/image_share" />
 
     <ImageView
         android:id="@+id/image_shows"
@@ -120,17 +110,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
+
         app:layout_constraintEnd_toStartOf="@+id/text_shows_count"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        app:srcCompat="@drawable/ic_shows_24" />
+        app:srcCompat="@drawable/ic_shows_24"
+        android:contentDescription="@string/shows_icon" />
 
     <TextView
         android:id="@+id/text_shows_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="22"
         app:layout_constraintBottom_toBottomOf="@+id/image_shows"
-        app:layout_constraintEnd_toEndOf="@id/imageView_more"
-        app:layout_constraintTop_toBottomOf="@id/barrier_content" />
+        app:layout_constraintEnd_toEndOf="@id/button_more"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content"
+        tools:text="22" />
 </androidx.constraintlayout.widget.ConstraintLayout>
