@@ -7,4 +7,6 @@
     <string name="post_more_update">Редактировать</string>
     <string name="editText_hint">Создать контент для нового поста</string>
     <string name="edit_massage_Title">Редактировать сообщение</string>
+    <string name="avatar">Фото профиля</string>
+    <string name="shows_icon">Иконка "Показов"</string>
 </resources>
