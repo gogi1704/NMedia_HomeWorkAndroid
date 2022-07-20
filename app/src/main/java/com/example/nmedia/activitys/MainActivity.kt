@@ -1,10 +1,13 @@
-package com.example.nmedia
+package com.example.nmedia.activitys
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.activity.viewModels
+import com.example.nmedia.PostCreateContract
+import com.example.nmedia.PostUpdateContract
 import com.example.nmedia.adapter.PostEventListener
 import com.example.nmedia.adapter.PostsAdapter
 import com.example.nmedia.databinding.ActivityMainBinding
@@ -20,6 +23,20 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel: PostViewModel by viewModels()
         val recycler = binding.recyclerListPosts
+
+        val postCreateLauncher = registerForActivityResult(PostCreateContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.editContent(result)
+            viewModel.savePost()
+        }
+
+        val postUpdateLauncher = registerForActivityResult(PostUpdateContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.edit(result)
+            viewModel.savePost()
+        }
+
+
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
@@ -27,7 +44,15 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun share(post: Post) {
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, post.content)
+                        type = "text/plain"
+                    }
+                    startActivity(intent)
                     viewModel.share(post.id)
+
+
                 }
 
                 override fun remove(post: Post) {
@@ -35,37 +60,21 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun update(post: Post) {
-                    viewModel.edit(post)
+                    postUpdateLauncher.launch(post)
+                }
+
+                override fun openVideo(post: Post) {
+                    val webpage: Uri = Uri.parse(post.videoUri)
+                    val intent = Intent(Intent.ACTION_VIEW, webpage)
+                    startActivity(intent)
                 }
             }
         )
         recycler.adapter = adapter
-
-        binding.buttonSend.setOnClickListener {
-            if (binding.editTextContent.text.isNullOrBlank()) {
-                Toast.makeText(this, "Text is empty", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val text = binding.editTextContent.text.toString()
-
-            viewModel.editContent(text)
-            viewModel.savePost()
-            binding.editTextContent.clearFocus()
-            AndroidUtils.hideKeyboard(binding.editTextContent)
-            binding.editableText.text = null
-            binding.editLayout.visibility = View.GONE
-            binding.editTextContent.text = null
-
+        binding.fabAddPost.setOnClickListener() {
+            postCreateLauncher.launch()
         }
 
-        binding.buttonClear.setOnClickListener {
-            viewModel.savePost()
-            binding.editTextContent.clearFocus()
-            AndroidUtils.hideKeyboard(binding.editTextContent)
-            binding.editableText.text = null
-            binding.editTextContent.text = null
-            binding.editLayout.visibility = View.GONE
-        }
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts.map { post -> post.copy() })
         }
@@ -73,13 +82,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.editedLiveData.observe(this) { editPost ->
             if (editPost.id == -1) {
                 return@observe
-            } else
-                binding.editLayout.visibility = View.VISIBLE
-                binding.editableText.text = editPost.content
-            with(binding.editTextContent) {
-                requestFocus()
-                AndroidUtils.showKeyboard(this)
-                setText(editPost.content)
             }
 
         }

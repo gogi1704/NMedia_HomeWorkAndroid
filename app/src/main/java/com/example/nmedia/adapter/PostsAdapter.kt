@@ -1,11 +1,17 @@
 package com.example.nmedia.adapter
 
+import android.app.Activity
+import android.content.Intent
+import android.opengl.Visibility
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
+import com.example.nmedia.URI
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
 
@@ -14,6 +20,7 @@ interface PostEventListener {
     fun share(post: Post)
     fun remove(post: Post)
     fun update(post: Post)
+    fun openVideo(post: Post)
 }
 
 
@@ -44,12 +51,20 @@ class PostsAdapter(
 
         fun bind(post: Post) {
             with(binding) {
+                if (post.videoUri != null) {
+                    videoContent.visibility = View.VISIBLE
+                    textTitleVideo.text = "Test Video"
+                }
                 textTitle.text = post.title
                 textContent.text = post.content
                 buttonLike.text = post.showCounts(post.likes)
                 buttonShare.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
                 buttonLike.isChecked = post.isLiked
+
+                imageVideo.setOnClickListener {
+                    listener.openVideo(post)
+                }
 
                 buttonLike.setOnClickListener {
                     listener.like(post)

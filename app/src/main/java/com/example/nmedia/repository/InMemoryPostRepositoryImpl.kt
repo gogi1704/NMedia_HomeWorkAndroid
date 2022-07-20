@@ -15,7 +15,8 @@ class InMemoryPostRepositoryImpl : PostRepository {
                 "WeatherAPI.com interactive API explorer",
                 12,
                 80,
-                999_999
+                999_999,
+                videoUri = "https://www.youtube.com/watch?v=81tXbOYJRJw&ab_channel=UFCRussia"
             ),
             Post(
                 1,
@@ -42,7 +43,8 @@ class InMemoryPostRepositoryImpl : PostRepository {
                 "It returns response headers, response code and response body.",
                 200,
                 80,
-                999_999
+                999_999,
+
             ),
         )
 
