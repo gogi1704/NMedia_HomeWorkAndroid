@@ -1,9 +1,12 @@
 package com.example.nmedia.viewModels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.InMemoryPostRepositoryImpl
+import com.example.nmedia.repository.SharedPrefsRepositoryImpl
 import kotlin.random.Random
 
 
@@ -15,12 +18,13 @@ val emptyPost = Post(
     likes = 0,
     shares = 0,
     shows = 0,
-    isLiked = false
+    isLiked = false,
+    videoUri = null
 
 )
 
-class PostViewModel : ViewModel() {
-    private val repository = InMemoryPostRepositoryImpl()
+class PostViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = SharedPrefsRepositoryImpl(application)
     var data = repository.getData()
     val editedLiveData = MutableLiveData(emptyPost)
 
