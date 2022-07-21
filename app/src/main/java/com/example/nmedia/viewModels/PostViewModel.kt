@@ -36,8 +36,8 @@ class PostViewModel : ViewModel() {
     }
 
     fun edit(post:Post) {
+        println(post)
     editedLiveData.value = post
-
     }
 
 
