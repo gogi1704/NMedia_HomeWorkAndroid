@@ -3,11 +3,8 @@ package com.example.nmedia.viewModels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.nmedia.model.Post
-import com.example.nmedia.repository.InMemoryPostRepositoryImpl
 import com.example.nmedia.repository.SharedPrefsRepositoryImpl
-import kotlin.random.Random
 
 
 val emptyPost = Post(
@@ -40,7 +37,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun edit(post:Post) {
-        println(post)
     editedLiveData.value = post
     }
 
