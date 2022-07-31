@@ -90,15 +90,6 @@ class ShowPostFragment : Fragment() {
                 }.show()
             }
         }
-
-
-
-
-
-
-
-
-
         return binding.root
     }
 
