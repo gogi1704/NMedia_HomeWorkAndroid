@@ -33,9 +33,8 @@ class CreatePostFragment : Fragment() {
 
                 viewModel.editContent(text)
                 viewModel.savePost()
-                findNavController().navigateUp()
-
-            } else findNavController().navigateUp()
+            }
+            findNavController().navigateUp()
 
         }
 
