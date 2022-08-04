@@ -18,11 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val db = PostsDbHelper(this , DATA_BASE_NAME , 1 , )
-        db.writableDatabase
-        db.writableDatabase
 
-        navController = findNavController(R.id.nav_host_fragment)
 
 
 

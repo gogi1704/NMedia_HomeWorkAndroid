@@ -14,7 +14,7 @@ class PostsDbHelper(
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
             "CREATE TABLE $TABLE_NAME" +
-                    "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMN_TITLE TEXT NOT NULL ," +
                     "$COLUMN_CONTENT TEXT ," +
                     "$COLUMN_DATE TEXT NOT NULL ," +
@@ -33,13 +33,27 @@ class PostsDbHelper(
     companion object PostColumns {
         const val DATA_BASE_NAME = "POSTS_DATA_BASE"
         const val TABLE_NAME = "Posts"
+        const val COLUMN_ID = "id"
         const val COLUMN_TITLE = "TITLE"
         const val COLUMN_CONTENT = "CONTENT"
         const val COLUMN_DATE = "DATE"
+        const val COLUMN_LIKES ="LIKES"
         const val  COLUMN_SHARES = "SHARES"
         const val  COLUMN_SHOWS = "SHOWS"
         const val  COLUMN_VIDEO_URI = "VIDEO_URI"
         const val  COLUMN_IS_LIKED = "IS_LIKED"
+
+        val ALL_COLUMNS = arrayOf(
+            COLUMN_ID,
+            COLUMN_TITLE,
+            COLUMN_CONTENT,
+            COLUMN_DATE,
+            COLUMN_LIKES,
+            COLUMN_SHARES,
+            COLUMN_SHOWS,
+            COLUMN_VIDEO_URI,
+            COLUMN_IS_LIKED
+        )
 
     }
 }
