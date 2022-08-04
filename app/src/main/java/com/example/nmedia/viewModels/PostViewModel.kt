@@ -3,11 +3,8 @@ package com.example.nmedia.viewModels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.nmedia.model.Post
-import com.example.nmedia.repository.InMemoryPostRepositoryImpl
 import com.example.nmedia.repository.SharedPrefsRepositoryImpl
-import kotlin.random.Random
 
 
 val emptyPost = Post(
@@ -39,9 +36,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         editedLiveData.value = emptyPost
     }
 
-    fun edit(post:Post) {
-        println(post)
-    editedLiveData.value = post
+    fun edit(post: Post) {
+        editedLiveData.value = post
     }
 
 
@@ -50,10 +46,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             val trimContent = content.trim()
             if (trimContent == it.content) {
                 return
-            }else{
-                editedLiveData.value = editedLiveData.value?.copy(content = trimContent )
+            } else {
+                editedLiveData.value = editedLiveData.value?.copy(content = trimContent)
             }
         }
+    }
+
+    fun getPostById(id: Int): Post {
+        val listPosts = data.value?.filter {
+            it.id == id
+        }
+        println(listPosts)
+        return listPosts!![0]
     }
 }
 

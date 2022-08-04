@@ -14,50 +14,31 @@
         android:theme="@style/Theme.NMedia"
         tools:targetApi="31">
 
-
         <activity
-            android:name=".activitys.MainActivity"
-            android:exported="true">
 
+            android:name=".fragments.MainActivity"
+            android:exported="true">
+            <nav-graph android:value="@navigation/nav_graph" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <intent-filter>
+                            </intent-filter>
+                            <intent-filter>
                                 <action android:name="android.intent.action.SEND" />
+
                                 <data android:mimeType="text/plain" />
-            </intent-filter>
+                            </intent-filter>
+                            <intent-filter>
+                                <action android:name="android.intent.action.VIEW" />
 
+                                <data
+                                    android:host="www.example.com"
+                                    android:scheme="http" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-               <data android:scheme="http" android:host="www.example.com"/>
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activitys.EditPostActivity"
-            android:exported="false">
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
+                                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".activitys.CreatePostActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
-
 
     </application>
 

@@ -1,17 +1,12 @@
 package com.example.nmedia.adapter
 
-import android.app.Activity
-import android.content.Intent
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
-import com.example.nmedia.URI
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
 
@@ -21,7 +16,10 @@ interface PostEventListener {
     fun remove(post: Post)
     fun update(post: Post)
     fun openVideo(post: Post)
+    fun clickItemShowPost(post: Post)
 }
+
+
 
 
 class PostsAdapter(
@@ -39,6 +37,7 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
+
 
     }
 
@@ -73,6 +72,13 @@ class PostsAdapter(
                 buttonShare.setOnClickListener {
                     listener.share(post)
                 }
+
+                itemView.setOnClickListener{
+                    clickItem(post)
+                }
+
+
+
                 buttonMore.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.post_more)
@@ -93,6 +99,10 @@ class PostsAdapter(
                     }.show()
                 }
             }
+        }
+
+        private fun clickItem(post: Post){
+            listener.clickItemShowPost(post)
         }
     }
 

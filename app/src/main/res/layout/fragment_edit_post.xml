@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activitys.EditPostActivity">
+    tools:context=".fragments.EditPostFragment">
 
 
     <ImageView
@@ -141,6 +141,7 @@
         android:id="@+id/create_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/fab_save"
         app:layout_constraintTop_toBottomOf="@+id/button_share" />
 

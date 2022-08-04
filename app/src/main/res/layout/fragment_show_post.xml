@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.ShowPostFragment">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imageView_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:srcCompat="@drawable/ic_netology_48_foreground" />
+
+    <TextView
+
+        android:id="@+id/text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/button_more"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView_icon"
+        app:layout_constraintTop_toTopOf="@+id/imageView_icon"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:textSize="11sp"
+        app:layout_constraintStart_toEndOf="@+id/imageView_icon"
+        app:layout_constraintTop_toBottomOf="@+id/text_title"
+        tools:text="22.04.2022" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_more"
+        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:icon="@drawable/ic_more_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_title"
+        tools:text="Контент" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="imageView_icon" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/video_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/barrier_content"
+        tools:visibility="visible">
+
+
+        <ImageView
+            android:id="@+id/image_video"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_netology_48_foreground" />
+
+        <TextView
+            android:id="@+id/text_titleVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_video"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/text_video_shows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/text_titleVideo"
+            app:layout_constraintTop_toBottomOf="@id/text_titleVideo"
+            tools:text="22.22.22" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic__play_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="text_content" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_like"
+        style="@style/Widget.Material3.Button.Like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        android:gravity="start|center"
+        app:icon="@drawable/ic_like_adaptive"
+        app:layout_constraintTop_toBottomOf="@id/video_content"
+        app:layout_constraintStart_toStartOf="@id/text_content"
+        tools:text="12" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share"
+        style="@style/Widget.Material3.Button.Share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:gravity="start|center"
+        app:icon="@drawable/ic_share_adaptive"
+        app:layout_constraintStart_toEndOf="@+id/button_like"
+        app:layout_constraintTop_toBottomOf="@+id/video_content"
+        tools:text="12" />
+
+
+    <ImageView
+        android:id="@+id/image_shows"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+
+        android:contentDescription="@string/shows_icon"
+        app:layout_constraintEnd_toStartOf="@+id/text_shows_count"
+        app:layout_constraintTop_toBottomOf="@id/video_content"
+        app:srcCompat="@drawable/ic_shows_24" />
+
+    <TextView
+        android:id="@+id/text_shows_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_shows"
+        app:layout_constraintEnd_toEndOf="@id/button_more"
+        app:layout_constraintTop_toBottomOf="@id/video_content"
+        tools:text="22" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

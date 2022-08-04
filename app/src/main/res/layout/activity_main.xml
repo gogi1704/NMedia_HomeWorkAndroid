@@ -1,44 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+   >
 
-    tools:context=".activitys.MainActivity">
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        tools:context=".fragments.MainActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_addPost"
-        android:layout_width="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/barrier_editText"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_add_post_24"/>
+    </fragment>
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_listPosts"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/barrier_editText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/list_item_layout" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="fab_addPost"
-        app:layout_constraintTop_toBottomOf="@id/recycler_listPosts">
-
-    </androidx.constraintlayout.widget.Barrier>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+</FrameLayout>
