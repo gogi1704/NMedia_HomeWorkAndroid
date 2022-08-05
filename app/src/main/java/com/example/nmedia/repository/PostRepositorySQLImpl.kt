@@ -19,27 +19,34 @@ class PostRepositorySQLImpl(private val dao: PostDao) : PostRepository {
     }
 
     override fun like(id: Int) {
-        TODO("Not yet implemented")
+        dao.like(id)
+        updateDb()
     }
 
     override fun share(id: Int) {
-        TODO("Not yet implemented")
+        dao.share(id)
+        updateDb()
     }
 
     override fun remove(id: Int) {
-        TODO("Not yet implemented")
+        dao.delete(id)
+        updateDb()
     }
 
     override fun savePost(post: Post) {
         val id = post.id
         val savedPost = dao.save(post)
-        posts = if (id == -1){
+        posts = if (id == -1) {
             listOf(savedPost) + posts
-        }else{
+        } else {
             posts.map {
                 if (it.id == id) it else savedPost
             }
         }
-        data.value = posts
+        updateDb()
+    }
+
+    private fun updateDb() {
+        data.value = dao.getAll()
     }
 }

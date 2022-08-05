@@ -37,8 +37,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         editedLiveData.value = emptyPost
     }
 
-    fun edit(post:Post) {
-    editedLiveData.value = post
+    fun edit(post: Post) {
+        editedLiveData.value = post
     }
 
 
@@ -47,8 +47,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             val trimContent = content.trim()
             if (trimContent == it.content) {
                 return
-            }else{
-                editedLiveData.value = editedLiveData.value?.copy(content = trimContent )
+            } else {
+                editedLiveData.value = editedLiveData.value?.copy(content = trimContent)
             }
         }
     }

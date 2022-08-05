@@ -38,11 +38,11 @@ class PostsDbHelper(
         const val COLUMN_TITLE = "TITLE"
         const val COLUMN_CONTENT = "CONTENT"
         const val COLUMN_DATE = "DATE"
-        const val COLUMN_LIKES ="LIKES"
-        const val  COLUMN_SHARES = "SHARES"
-        const val  COLUMN_SHOWS = "SHOWS"
-        const val  COLUMN_VIDEO_URI = "VIDEO_URI"
-        const val  COLUMN_IS_LIKED = "IS_LIKED"
+        const val COLUMN_LIKES = "LIKES"
+        const val COLUMN_SHARES = "SHARES"
+        const val COLUMN_SHOWS = "SHOWS"
+        const val COLUMN_VIDEO_URI = "VIDEO_URI"
+        const val COLUMN_IS_LIKED = "IS_LIKED"
 
         val ALL_COLUMNS = arrayOf(
             COLUMN_ID,

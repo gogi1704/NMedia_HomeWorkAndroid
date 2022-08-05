@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.model.Post
 
 interface PostRepository {
-    fun getData():MutableLiveData<List<Post>>
-    fun like(id:Int)
-    fun share(id:Int)
+    fun getData(): MutableLiveData<List<Post>>
+    fun like(id: Int)
+    fun share(id: Int)
     fun remove(id: Int)
     fun savePost(post: Post)
 
