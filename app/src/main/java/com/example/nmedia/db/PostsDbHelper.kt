@@ -18,6 +18,7 @@ class PostsDbHelper(
                     "$COLUMN_TITLE TEXT NOT NULL ," +
                     "$COLUMN_CONTENT TEXT ," +
                     "$COLUMN_DATE TEXT NOT NULL ," +
+                    "$COLUMN_LIKES INTEGER NOT NULL DEFAULT 0," +
                     "$COLUMN_SHARES INTEGER NOT NULL DEFAULT 0 ," +
                     "$COLUMN_SHOWS INTEGER NOT NULL DEFAULT 0 ," +
                     "$COLUMN_VIDEO_URI TEXT ," +

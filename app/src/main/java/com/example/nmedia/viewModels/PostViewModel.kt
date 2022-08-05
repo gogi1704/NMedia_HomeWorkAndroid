@@ -3,8 +3,9 @@ package com.example.nmedia.viewModels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.nmedia.AppDb
 import com.example.nmedia.model.Post
-import com.example.nmedia.repository.SharedPrefsRepositoryImpl
+import com.example.nmedia.repository.PostRepositorySQLImpl
 
 
 val emptyPost = Post(
@@ -21,7 +22,7 @@ val emptyPost = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = SharedPrefsRepositoryImpl(application)
+    private val repository = PostRepositorySQLImpl(AppDb.getInstance(application).postDao)
     var data = repository.getData()
     val editedLiveData = MutableLiveData(emptyPost)
 

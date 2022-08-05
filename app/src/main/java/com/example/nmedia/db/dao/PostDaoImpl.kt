@@ -40,7 +40,7 @@ class PostDaoImpl(private val db:SQLiteDatabase):PostDao {
 
     override fun save(post: Post): Post {
        val values = ContentValues().apply {
-           if (post.id == -1){
+           if (post.id != -1){
                put(COLUMN_ID , post.id)
            }
 
@@ -74,7 +74,14 @@ class PostDaoImpl(private val db:SQLiteDatabase):PostDao {
     }
 
     override fun like(id: Int) {
-        TODO("Not yet implemented")
+       db.execSQL(
+           """
+               UPDATE $TABLE_NAME SET
+               $COLUMN_LIKES = $COLUMN_LIKES + CASE WHEN $COLUMN_IS_LIKED THEN -1 ELSE + 1 END ,
+               $COLUMN_IS_LIKED = CASE WHEN $COLUMN_IS_LIKED THEN 0 ELSE 1 END
+               WHERE $COLUMN_ID = ?; 
+           """.trimIndent(), arrayOf(id)
+       )
     }
 
     override fun share(id: Int) {
