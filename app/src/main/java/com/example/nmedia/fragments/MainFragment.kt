@@ -38,9 +38,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 override fun like(post: Post) {
                     viewModel.like(post.id)
                 }
+
                 override fun clickItemShowPost(post: Post) {
                     findNavController()
-                        .navigate(R.id.action_mainFragment_to_showPostFragment, createPostBundle(post))
+                        .navigate(
+                            R.id.action_mainFragment_to_showPostFragment,
+                            createPostBundle(post)
+                        )
                 }
 
                 override fun share(post: Post) {
@@ -59,7 +63,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 override fun update(post: Post) {
                     findNavController()
-                        .navigate(R.id.action_mainFragment_to_editPostFragment,createPostBundle(post) )
+                        .navigate(
+                            R.id.action_mainFragment_to_editPostFragment,
+                            createPostBundle(post)
+                        )
 
                 }
 
@@ -91,7 +98,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         return binding.root
     }
 
-    fun createPostBundle(post: Post):Bundle{
+    fun createPostBundle(post: Post): Bundle {
         return Bundle().apply {
             putInt(ID, post.id)
             putString(TITLE, post.title)
@@ -100,7 +107,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             putInt(LIKES, post.likes)
             putInt(SHARES, post.shares)
             putInt(SHOWS, post.shows)
-            putString(URI , post.videoUri)
+            putString(URI, post.videoUri)
             putBoolean(ISLIKED, post.isLiked)
 
         }

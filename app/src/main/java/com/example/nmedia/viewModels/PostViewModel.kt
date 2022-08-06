@@ -1,9 +1,12 @@
 package com.example.nmedia.viewModels
 
 import android.app.Application
+import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.AppDb
+import com.example.nmedia.DEFAULT_VALUE
+import com.example.nmedia.DRAFT
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositorySQLImpl
 
@@ -22,6 +25,9 @@ val emptyPost = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+    private val sharedPrefDraft  = application.getSharedPreferences("draft" , MODE_PRIVATE)
+    private val sharedPrefEditor = sharedPrefDraft.edit()
+
     private val repository = PostRepositorySQLImpl(AppDb.getInstance(application).postDao)
     var data = repository.getData()
     val editedLiveData = MutableLiveData(emptyPost)
@@ -52,5 +58,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun putSharedPref(string: String){
+        sharedPrefEditor.putString(DRAFT, string)
+        sharedPrefEditor.commit()
+    }
+
+    fun getSharedPref():String{
+        return sharedPrefDraft.getString(DRAFT , DEFAULT_VALUE).toString()
+    }
+
+    fun clearSharedPref(){
+        sharedPrefEditor.clear()
+        sharedPrefEditor.commit()
+    }
+
 }
 

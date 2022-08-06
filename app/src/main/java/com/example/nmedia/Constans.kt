@@ -9,6 +9,6 @@ const val SHARES = "shares"
 const val SHOWS = "shows"
 const val ISLIKED = "false"
 const val URI = "uri"
-
-const val DEFAULT = 0
+const val DRAFT = "draft"
+const val DEFAULT_VALUE = "null"
 
