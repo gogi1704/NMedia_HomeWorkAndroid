@@ -40,11 +40,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun clickItemShowPost(post: Post) {
-                    val bundle = Bundle().apply {
-                       putInt(ID , post.id)
-                    }
-                    findNavController().navigate(
-                        R.id.action_mainFragment_to_showPostFragment, bundle)
+
+                    findNavController()
+                        .navigate(
+                            R.id.action_mainFragment_to_showPostFragment,
+                            createPostBundle(post)
+                        )
+
                 }
 
                 override fun share(post: Post) {
