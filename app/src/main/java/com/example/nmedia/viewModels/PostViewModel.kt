@@ -74,6 +74,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         sharedPrefEditor.commit()
     }
 
+    fun getPostById(id: Int): Post {
+        val listPosts = data.value?.filter {
+            it.id == id
+        }
+        return listPosts!![0]
+    }
+
 
 }
 
