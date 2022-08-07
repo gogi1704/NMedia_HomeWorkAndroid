@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -30,7 +31,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
 
-
         val recycler = binding.recyclerListPosts
 
         val adapter = PostsAdapter(
@@ -40,11 +40,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun clickItemShowPost(post: Post) {
+
                     findNavController()
                         .navigate(
                             R.id.action_mainFragment_to_showPostFragment,
                             createPostBundle(post)
                         )
+
                 }
 
                 override fun share(post: Post) {

@@ -24,17 +24,19 @@ class EditPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(layoutInflater, container, false)
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
-        with(binding) {
-            textTitle.text = requireArguments().getString(TITLE)
-            textContent.text = requireArguments().getString(CONTENT)
-            textDate.text = requireArguments().getString(DATE)
-            buttonLike.text = requireArguments().getInt(LIKES).toString()
-            buttonShare.text = requireArguments().getInt(SHARES).toString()
-            textShowsCount.text = requireArguments().getInt(SHOWS).toString()
-            buttonLike.isChecked = requireArguments().getBoolean(ISLIKED)
+
+            with(binding) {
+                val post = viewModel.getPostById(requireArguments().getInt(ID))
+                textTitle.text = post.title
+                textContent.text = post.content
+                textDate.text = post.date
+                buttonLike.text = post.likes.toString()
+                buttonShare.text = post.shares.toString()
+                textShowsCount.text = post.shows.toString()
+                buttonLike.isChecked =post.isLiked
 
             with(createContent) {
-                setText(arguments?.getString(CONTENT))
+                setText(post.content)
                 requestFocus()
                 AndroidUtils.showKeyboard(this)
 
@@ -43,8 +45,7 @@ class EditPostFragment : Fragment() {
 
             fabSave.setOnClickListener() {
                 val text = binding.createContent.text.toString()
-                if (text != requireArguments().getString(CONTENT)) {
-
+                if (text != viewModel.getPostById(requireArguments().getInt(ID)).content) {
                     viewModel.edit(
                         Post(
                             id = requireArguments().getInt(ID),
@@ -58,9 +59,8 @@ class EditPostFragment : Fragment() {
                         )
                     )
                     viewModel.savePost()
-                    findNavController().navigate(R.id.action_editPostFragment_to_mainFragment)
-
-                } else findNavController().navigate(R.id.action_editPostFragment_to_mainFragment)
+                }
+                findNavController().navigateUp()
 
 
             }

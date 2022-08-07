@@ -45,9 +45,11 @@ class CreatePostFragment : Fragment() {
             if (binding.textEdit.text.isNotBlank()) {
                 viewModel.editContent(text)
                 viewModel.savePost()
+
                 viewModel.clearSharedPref()
             }
             findNavController().navigateUp()
+
         }
 
         return binding.root

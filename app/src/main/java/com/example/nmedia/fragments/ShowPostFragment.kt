@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
 import com.example.nmedia.databinding.FragmentShowPostBinding
+import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostViewModel
 
 
@@ -26,16 +27,15 @@ class ShowPostFragment : Fragment() {
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
 
-
         with(binding) {
-            textTitle.text = requireArguments().getString(TITLE)
-            textTitle.text = requireArguments().getString(TITLE)
-            textContent.text = requireArguments().getString(CONTENT)
-            textDate.text = requireArguments().getString(DATE)
-            buttonLike.text = requireArguments().getInt(LIKES).toString()
-            buttonShare.text = requireArguments().getInt(SHARES).toString()
-            textShowsCount.text = requireArguments().getInt(SHOWS).toString()
-            buttonLike.isChecked = requireArguments().getBoolean(ISLIKED)
+            val post = viewModel.getPostById(requireArguments().getInt(ID))
+            textTitle.text = post.title
+            textContent.text = post.content
+            textDate.text = post.date
+            buttonLike.text = post.likes.toString()
+            buttonShare.text = post.shares.toString()
+            textShowsCount.text = post.shows.toString()
+            buttonLike.isChecked =post.isLiked
 
             buttonLike.setOnClickListener{
                 val likes:Int = if (buttonLike.isChecked) buttonLike.text.toString().toInt() + 1
@@ -72,14 +72,6 @@ class ShowPostFragment : Fragment() {
                             R.id.update -> {
                                 findNavController().navigate(R.id.action_showPostFragment_to_editPostFragment , Bundle().apply {
                                     putInt(ID, requireArguments().getInt(ID))
-                                    putString(TITLE,  textTitle.text.toString())
-                                    putString(CONTENT, textContent.text.toString())
-                                    putString(DATE, textDate.text.toString())
-                                    putInt(LIKES, buttonLike.text.toString().toInt())
-                                    putInt(SHARES, buttonShare.text.toString().toInt())
-                                    putInt(SHOWS,textShowsCount.text.toString().toInt())
-                                    putString(URI , requireArguments().getString(URI))
-                                    putBoolean(ISLIKED, buttonLike.isChecked)
                                     })
 
                                 return@setOnMenuItemClickListener true

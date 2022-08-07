@@ -59,6 +59,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
     fun putSharedPref(string: String){
         sharedPrefEditor.putString(DRAFT, string)
         sharedPrefEditor.commit()
@@ -72,6 +73,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         sharedPrefEditor.clear()
         sharedPrefEditor.commit()
     }
+
 
 }
 

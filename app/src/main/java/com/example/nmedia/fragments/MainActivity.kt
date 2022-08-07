@@ -11,7 +11,6 @@ import com.example.nmedia.db.PostsDbHelper.PostColumns.DATA_BASE_NAME
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

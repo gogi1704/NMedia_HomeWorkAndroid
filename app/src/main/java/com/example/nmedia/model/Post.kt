@@ -1,16 +1,20 @@
 package com.example.nmedia.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Post(
     val id: Int,
     val title: String,
     val date: String,
-    val content:String,
+    val content: String,
     val likes: Int = 0,
     val shares: Int,
     val shows: Int,
-    val videoUri:String?= null,
+    val videoUri: String? = null,
     val isLiked: Boolean = false
-) {
+) : Parcelable {
 
     fun showCounts(num: Int): String {
         val str: String = if (num < 1000) {
