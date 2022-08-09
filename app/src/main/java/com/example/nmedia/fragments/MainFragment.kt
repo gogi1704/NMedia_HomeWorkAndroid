@@ -101,6 +101,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     fun createPostBundle(post: Post): Bundle {
+        println(post)
         return Bundle().apply {
             putInt(ID, post.id)
             putString(TITLE, post.title)
