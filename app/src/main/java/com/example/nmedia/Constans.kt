@@ -9,6 +9,11 @@ const val SHARES = "shares"
 const val SHOWS = "shows"
 const val ISLIKED = "false"
 const val URI = "uri"
+
+
 const val DRAFT = "draft"
 const val DEFAULT_VALUE = "null"
+
+const val DATA_BASE_NAME = "POSTS_DATA_BASE"
+
 

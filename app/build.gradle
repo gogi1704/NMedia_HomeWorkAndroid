@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -31,17 +32,20 @@ android {
         jvmTarget = '1.8'
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 }
 
 dependencies {
-    implementation 'androidx.fragment:fragment:1.5.0'
+    implementation 'androidx.fragment:fragment:1.5.1'
     def lifecycle_version = "2.6.0-alpha01"
     def arch_version = "2.1.0"
     def activity_version = "1.5.0"
     def nav_version = "2.5.0"
+    def room_ver = "2.3.0"
+    implementation "androidx.room:room-runtime:$room_ver"
+    kapt "androidx.room:room-compiler:$room_ver"
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
@@ -52,7 +56,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation 'com.google.code.gson:gson:2.8.9'
-    implementation "androidx.fragment:fragment-ktx:1.5.0"
+    implementation "androidx.fragment:fragment-ktx:1.5.1"
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
