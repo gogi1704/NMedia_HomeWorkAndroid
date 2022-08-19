@@ -9,4 +9,9 @@
     <string name="edit_massage_Title">Редактировать сообщение</string>
     <string name="avatar">Фото профиля</string>
     <string name="shows_icon">Иконка просмотренных</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="notification_user_shared">%1$s репостнул %2$s</string>
+    <string name="notification_new_post">Пользователь %1$s добавил пост %2$s</string>
+
+
 </resources>
