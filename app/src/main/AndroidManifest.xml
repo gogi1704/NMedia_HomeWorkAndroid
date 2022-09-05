@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nmedia">
 
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,7 +17,10 @@
         android:roundIcon="@mipmap/ic_netology_48_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NMedia"
+        android:usesCleartextTraffic="${usesClearTextTraffic}"
         tools:targetApi="31">
+
+
 
         <activity
 
