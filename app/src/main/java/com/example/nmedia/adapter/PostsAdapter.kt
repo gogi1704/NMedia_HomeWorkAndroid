@@ -54,13 +54,13 @@ class PostsAdapter(
                     videoContent.visibility = View.VISIBLE
                     textTitleVideo.text = "Test Video"
                 }
-                textTitle.text = post.title
+                textTitle.text = post.author
                 textContent.text = post.content
-                textDate.text = post.date
+                textDate.text = post.published
                 buttonLike.text = post.showCounts(post.likes)
                 buttonShare.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
-                buttonLike.isChecked = post.isLiked
+                buttonLike.isChecked = post.likedByMe
 
                 imageVideo.setOnClickListener {
                     listener.openVideo(post)

@@ -1,15 +1,14 @@
 package com.example.nmedia.fragments
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
@@ -28,11 +27,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        viewModel.loadPost()
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
-
         val recycler = binding.recyclerListPosts
-
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
@@ -83,11 +80,27 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         )
         recycler.adapter = adapter
         binding.fabAddPost.setOnClickListener() {
+
+
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
         }
+//
+//        viewModel.data.observe(viewLifecycleOwner) { posts ->
+//            //adapter.submitList(posts.map { post -> post.copy() })
+//        }
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts.map { post -> post.copy() })
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            Log.d("my" , "observ${state.posts}")
+            with(binding) {
+                progressBar.isVisible = state.loading
+                errorGroup.isVisible = state.error
+                textIsEmpty.isVisible = state.isEmpty
+            }
+            adapter.submitList(state.posts)
+        }
+
+        binding.buttonRetry.setOnClickListener(){
+            viewModel.loadPost()
         }
 
         viewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
@@ -104,14 +117,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         println(post)
         return Bundle().apply {
             putInt(ID, post.id)
-            putString(TITLE, post.title)
+            putString(TITLE, post.author)
             putString(CONTENT, post.content)
-            putString(DATE, post.date)
+            putString(DATE, post.published)
             putInt(LIKES, post.likes)
             putInt(SHARES, post.shares)
             putInt(SHOWS, post.shows)
             putString(URI, post.videoUri)
-            putBoolean(ISLIKED, post.isLiked)
+            putBoolean(ISLIKED, post.likedByMe)
 
         }
     }

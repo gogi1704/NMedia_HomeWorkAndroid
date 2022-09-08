@@ -1,19 +1,16 @@
 package com.example.nmedia.fragments
 
 import android.content.Intent
-import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
 import com.example.nmedia.databinding.FragmentShowPostBinding
-import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostViewModel
 
 
@@ -29,13 +26,13 @@ class ShowPostFragment : Fragment() {
 
         with(binding) {
             val post = viewModel.getPostById(requireArguments().getInt(ID))
-            textTitle.text = post.title
+            textTitle.text = post.author
             textContent.text = post.content
-            textDate.text = post.date
+            textDate.text = post.published
             buttonLike.text = post.likes.toString()
             buttonShare.text = post.shares.toString()
             textShowsCount.text = post.shows.toString()
-            buttonLike.isChecked =post.isLiked
+            buttonLike.isChecked =post.likedByMe
 
             buttonLike.setOnClickListener{
                 val likes:Int = if (buttonLike.isChecked) buttonLike.text.toString().toInt() + 1
