@@ -2,13 +2,13 @@ package com.example.nmedia.viewModels
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.db.AppDb
 import com.example.nmedia.DEFAULT_VALUE
 import com.example.nmedia.DRAFT
+import com.example.nmedia.SingleLiveEvent
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryRoomImpl
 import ru.netology.nmedia.model.FeedModel
@@ -20,7 +20,7 @@ val emptyPost = Post(
     id = 0,
     author = "default title",
     content = "default content",
-    published = "default date",
+    published = 0,
     likes = 0,
     shares = 0,
     shows = 0,
@@ -38,23 +38,24 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         PostRepositoryRoomImpl(AppDb.getInstance(application).postDao)
 
 
-
     private val _data = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel>
         get() = _data
 
-   // var data = repository.getData()
+    private val _postCreated = SingleLiveEvent<Unit>()
+    val postCreated: LiveData<Unit>
+        get() = _postCreated
+
     val editedLiveData = MutableLiveData(emptyPost)
 
 
-    fun loadPost(){
+    fun loadPost() {
         thread {
             _data.postValue(FeedModel(loading = true))
             try {
                 val posts = repository.getDataServer()
-                _data.postValue(FeedModel(posts = posts , isEmpty = posts.isEmpty()))
-                Log.d("my" , "viewModel${posts}")
-            }catch (e:IOException){
+                _data.postValue(FeedModel(posts = posts, isEmpty = posts.isEmpty()))
+            } catch (e: IOException) {
                 FeedModel(error = true)
             }.also { _data::postValue }
 
@@ -63,13 +64,36 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    fun like(id: Int) = repository.like(id)
-    fun share(id: Int) = repository.share(id)
-    fun remove(id: Int) = repository.remove(id)
+    fun like(id: Int , isLiked:Boolean) {
+        thread {
+            repository.like(id , isLiked)
+            loadPost()
+        }
+
+    }
+
+    fun share(id: Int) = thread { repository.share(id) }
+    fun remove(id: Int) = thread { //repository.remove(id)
+        val old = _data.value?.posts.orEmpty()
+        _data.postValue(
+            _data.value?.copy(posts = _data.value?.posts.orEmpty()
+                .filter { it.id != id })
+        )
+
+        try {
+            repository.remove(id)
+        } catch (io: IOException) {
+            _data.postValue(_data.value?.copy(posts = old))
+        }
+    }
 
     fun savePost() {
         editedLiveData.value?.let {
-            repository.savePost(it)
+            thread {
+                repository.savePost(it)
+                _postCreated.postValue(Unit)
+            }
+
         }
         editedLiveData.value = emptyPost
     }

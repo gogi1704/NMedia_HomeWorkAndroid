@@ -28,7 +28,7 @@ class ShowPostFragment : Fragment() {
             val post = viewModel.getPostById(requireArguments().getInt(ID))
             textTitle.text = post.author
             textContent.text = post.content
-            textDate.text = post.published
+            textDate.text = post.published.toString()
             buttonLike.text = post.likes.toString()
             buttonShare.text = post.shares.toString()
             textShowsCount.text = post.shows.toString()
@@ -38,7 +38,7 @@ class ShowPostFragment : Fragment() {
                 val likes:Int = if (buttonLike.isChecked) buttonLike.text.toString().toInt() + 1
                 else buttonLike.text.toString().toInt() - 1
                 buttonLike.text = likes.toString()
-                viewModel.like( requireArguments().getInt(ID))
+                viewModel.like( requireArguments().getInt(ID) , post.likedByMe)
 
             }
 

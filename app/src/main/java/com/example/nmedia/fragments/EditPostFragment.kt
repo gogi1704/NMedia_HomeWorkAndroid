@@ -29,7 +29,7 @@ class EditPostFragment : Fragment() {
                 val post = viewModel.getPostById(requireArguments().getInt(ID))
                 textTitle.text = post.author
                 textContent.text = post.content
-                textDate.text = post.published
+                textDate.text = post.published.toString()
                 buttonLike.text = post.likes.toString()
                 buttonShare.text = post.shares.toString()
                 textShowsCount.text = post.shows.toString()
@@ -50,7 +50,7 @@ class EditPostFragment : Fragment() {
                         Post(
                             id = requireArguments().getInt(ID),
                             author = textTitle.text.toString(),
-                            published = textDate.text.toString(),
+                            published = textDate.text.toString().toInt(),
                             content = text,
                             likes = buttonLike.text.toString().toInt(),
                             shares = buttonShare.text.toString().toInt(),

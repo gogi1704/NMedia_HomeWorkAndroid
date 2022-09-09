@@ -56,7 +56,7 @@ class PostsAdapter(
                 }
                 textTitle.text = post.author
                 textContent.text = post.content
-                textDate.text = post.published
+                textDate.text = post.published.toString()
                 buttonLike.text = post.showCounts(post.likes)
                 buttonShare.text = post.showCounts(post.shares)
                 textShowsCount.text = post.showCounts(post.shows)
