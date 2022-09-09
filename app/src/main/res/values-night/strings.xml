@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="load_error">load error</string>
+    <string name="list_is_empty">List is empty</string>
+    <string name="retry">retry</string>
+</resources>
