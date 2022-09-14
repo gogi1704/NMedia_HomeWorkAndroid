@@ -13,7 +13,7 @@ data class Post(
     val shares: Int,
     val shows: Int,
     val videoUri: String? = null,
-    val likedByMe: Boolean = false
+    var likedByMe: Boolean = false
 ) : Parcelable {
 
     fun showCounts(num: Int): String {

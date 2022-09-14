@@ -64,16 +64,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    fun like(id: Int , isLiked:Boolean) {
+    fun like(id: Int, isLiked: Boolean) {
         thread {
-            repository.like(id , isLiked)
-            loadPost()
+            repository.like(id, isLiked)
+            likePost(id)
         }
+
 
     }
 
     fun share(id: Int) = thread { repository.share(id) }
-    fun remove(id: Int) = thread { //repository.remove(id)
+    fun remove(id: Int) = thread {
+        repository.remove(id)
         val old = _data.value?.posts.orEmpty()
         _data.postValue(
             _data.value?.copy(posts = _data.value?.posts.orEmpty()
@@ -136,6 +138,22 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         return listPosts!![0]
     }
 
+    private fun likePost(id: Int) {
+        val listPost = _data.value?.posts?.toMutableList()
+        val filteredList = _data.value?.posts?.filter {
+            it.id == id
+        }
+        var post = filteredList?.get(0)
+        val index = listPost?.indexOf(post)
+        post = if (post?.likedByMe == false) {
+            post.copy(likes = post.likes + 1 , likedByMe = !post.likedByMe)
+        } else {
+            post?.copy(likes = post.likes - 1 ,  likedByMe = !post.likedByMe)
+        }
 
+        listPost?.set(index!!, post!!)
+        listPost as List<Post>
+        _data.postValue(_data.value?.copy(posts = listPost))
+    }
 }
 

@@ -84,7 +84,7 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
     override fun savePost(post: Post) {
 
         val request = Request.Builder()
-            .url("$BASE_URL/api/posts")
+            .url("$BASE_URL/api/slow/posts")
             .post(gson.toJson(post).toRequestBody(contentType))
             .build()
 

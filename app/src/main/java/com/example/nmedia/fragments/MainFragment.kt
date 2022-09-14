@@ -87,10 +87,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
         }
-//
-//        viewModel.data.observe(viewLifecycleOwner) { posts ->
-//            //adapter.submitList(posts.map { post -> post.copy() })
-//        }
 
         viewModel.data.observe(viewLifecycleOwner) { state ->
             with(binding) {
