@@ -6,14 +6,14 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Post(
     val id: Int,
-    val title: String,
-    val date: String,
+    val author: String,
+    val published: Int,
     val content: String,
     val likes: Int = 0,
     val shares: Int,
     val shows: Int,
     val videoUri: String? = null,
-    val isLiked: Boolean = false
+    var likedByMe: Boolean = false
 ) : Parcelable {
 
     fun showCounts(num: Int): String {

@@ -1,17 +1,17 @@
 package com.example.nmedia.fragments
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.example.nmedia.*
 import com.example.nmedia.adapter.PostEventListener
 import com.example.nmedia.adapter.PostsAdapter
@@ -22,21 +22,21 @@ import com.example.nmedia.viewModels.PostViewModel
 class MainFragment : Fragment(R.layout.fragment_main) {
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private lateinit var binding: FragmentMainBinding
+    private lateinit var swipeToRefresh:SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        viewModel.loadPost()
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
-
+         swipeToRefresh = binding.refreshSwipe
         val recycler = binding.recyclerListPosts
-
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
-                    viewModel.like(post.id)
+                    viewModel.like(post.id , post.likedByMe)
                 }
 
                 override fun clickItemShowPost(post: Post) {
@@ -83,12 +83,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         )
         recycler.adapter = adapter
         binding.fabAddPost.setOnClickListener() {
+
+
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts.map { post -> post.copy() })
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            with(binding) {
+                progressBar.isVisible = state.loading
+                errorGroup.isVisible = state.error
+                textIsEmpty.isVisible = state.isEmpty
+            }
+            adapter.submitList(state.posts)
         }
+
 
         viewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
 
@@ -97,6 +105,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
 
         }
+
+        binding.buttonRetry.setOnClickListener(){
+            viewModel.loadPost()
+        }
+
+       swipeToRefresh.setOnRefreshListener {
+           swipeToRefresh.isRefreshing = false
+           viewModel.loadPost()
+       }
+
         return binding.root
     }
 
@@ -104,14 +122,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         println(post)
         return Bundle().apply {
             putInt(ID, post.id)
-            putString(TITLE, post.title)
+            putString(TITLE, post.author)
             putString(CONTENT, post.content)
-            putString(DATE, post.date)
+            putString(DATE, post.published.toString())
             putInt(LIKES, post.likes)
             putInt(SHARES, post.shares)
             putInt(SHOWS, post.shows)
             putString(URI, post.videoUri)
-            putBoolean(ISLIKED, post.isLiked)
+            putBoolean(ISLIKED, post.likedByMe)
 
         }
     }

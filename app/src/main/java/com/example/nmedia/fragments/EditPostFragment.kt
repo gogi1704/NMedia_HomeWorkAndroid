@@ -27,13 +27,13 @@ class EditPostFragment : Fragment() {
 
             with(binding) {
                 val post = viewModel.getPostById(requireArguments().getInt(ID))
-                textTitle.text = post.title
+                textTitle.text = post.author
                 textContent.text = post.content
-                textDate.text = post.date
+                textDate.text = post.published.toString()
                 buttonLike.text = post.likes.toString()
                 buttonShare.text = post.shares.toString()
                 textShowsCount.text = post.shows.toString()
-                buttonLike.isChecked =post.isLiked
+                buttonLike.isChecked =post.likedByMe
 
             with(createContent) {
                 setText(post.content)
@@ -49,13 +49,13 @@ class EditPostFragment : Fragment() {
                     viewModel.edit(
                         Post(
                             id = requireArguments().getInt(ID),
-                            title = textTitle.text.toString(),
-                            date = textDate.text.toString(),
+                            author = textTitle.text.toString(),
+                            published = textDate.text.toString().toInt(),
                             content = text,
                             likes = buttonLike.text.toString().toInt(),
                             shares = buttonShare.text.toString().toInt(),
                             shows = textShowsCount.text.toString().toInt(),
-                            isLiked = buttonLike.isChecked
+                            likedByMe = buttonLike.isChecked
                         )
                     )
                     viewModel.savePost()

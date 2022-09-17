@@ -48,8 +48,12 @@ class CreatePostFragment : Fragment() {
 
                 viewModel.clearSharedPref()
             }
-            findNavController().navigateUp()
 
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner){
+            viewModel.loadPost()
+            findNavController().navigateUp()
         }
 
         return binding.root

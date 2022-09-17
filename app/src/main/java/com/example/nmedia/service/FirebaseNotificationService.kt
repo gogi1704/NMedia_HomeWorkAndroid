@@ -3,10 +3,7 @@ package com.example.nmedia.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Build
-import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.nmedia.R
@@ -128,7 +125,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 getString(
                     R.string.notification_new_post,
                     post.id.toString(),
-                    post.title
+                    post.author
                 )
             )
             .setContentText(post.content)
