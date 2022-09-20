@@ -20,6 +20,7 @@ val emptyPost = Post(
     id = 0,
     author = "default title",
     content = "default content",
+    authorAvatar = "",
     published = 0,
     likes = 0,
     shares = 0,
@@ -50,19 +51,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun loadPost() {
-        thread {
-            _data.postValue(FeedModel(loading = true))
-            try {
-                val posts = repository.getDataServer()
-                _data.postValue(FeedModel(posts = posts, isEmpty = posts.isEmpty()))
-            } catch (e: IOException) {
-                FeedModel(error = true)
-            }.also { _data::postValue }
+        _data.value = FeedModel(loading = true)
+        repository.getDataFromServer(object : PostRepository.GetAllCallback{
+            override fun onSuccess(posts: List<Post>) {
+                _data.postValue(FeedModel(posts = posts , isEmpty = posts.isEmpty()))
+            }
 
+            override fun onError(e: Exception) {
+               _data.postValue(FeedModel(error = true))
+            }
+        })
 
-        }
 
     }
+
 
     fun like(id: Int, isLiked: Boolean) {
         thread {

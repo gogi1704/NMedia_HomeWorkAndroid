@@ -83,8 +83,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         )
         recycler.adapter = adapter
         binding.fabAddPost.setOnClickListener() {
-
-
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
         }
 
