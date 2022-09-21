@@ -52,13 +52,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadPost() {
         _data.value = FeedModel(loading = true)
-        repository.getDataFromServer(object : PostRepository.GetAllCallback{
+        repository.getDataFromServer(object : PostRepository.GetAllCallback {
             override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts , isEmpty = posts.isEmpty()))
+                _data.postValue(FeedModel(posts = posts, isEmpty = posts.isEmpty()))
             }
 
             override fun onError(e: Exception) {
-               _data.postValue(FeedModel(error = true))
+                _data.postValue(FeedModel(error = true))
             }
         })
 
@@ -67,16 +67,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun like(id: Int, isLiked: Boolean) {
-        thread {
             repository.like(id, isLiked)
             likePost(id)
-        }
-
-
     }
 
-    fun share(id: Int) = thread { repository.share(id) }
-    fun remove(id: Int) = thread {
+    fun share(id: Int) =  repository.share(id)
+
+    fun remove(id: Int) {
         repository.remove(id)
         val old = _data.value?.posts.orEmpty()
         _data.postValue(
@@ -89,15 +86,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         } catch (io: IOException) {
             _data.postValue(_data.value?.copy(posts = old))
         }
+
     }
 
     fun savePost() {
         editedLiveData.value?.let {
-            thread {
                 repository.savePost(it)
                 _postCreated.postValue(Unit)
-            }
-
         }
         editedLiveData.value = emptyPost
     }
@@ -148,9 +143,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         var post = filteredList?.get(0)
         val index = listPost?.indexOf(post)
         post = if (post?.likedByMe == false) {
-            post.copy(likes = post.likes + 1 , likedByMe = !post.likedByMe)
+            post.copy(likes = post.likes + 1, likedByMe = !post.likedByMe)
         } else {
-            post?.copy(likes = post.likes - 1 ,  likedByMe = !post.likedByMe)
+            post?.copy(likes = post.likes - 1, likedByMe = !post.likedByMe)
         }
 
         listPost?.set(index!!, post!!)
