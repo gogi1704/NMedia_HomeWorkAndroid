@@ -1,6 +1,8 @@
 package com.example.nmedia.repository
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Transformations
 import com.example.nmedia.db.PostEntity
 import com.example.nmedia.db.dao.PostDao
@@ -8,11 +10,16 @@ import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 import java.lang.RuntimeException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
@@ -47,18 +54,29 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
 
     }
 
-    override fun getDataServer(): List<Post> {
+    override fun getDataFromServer(callback: PostRepository.GetAllCallback) {
         val request = Request.Builder()
             .url("$BASE_URL/api/slow/posts")
             .build()
 
-        return client.newCall(request)
-            .execute()
-            .let { it.body?.string() ?: throw RuntimeException("Body is null") }
-            .let {
-                gson.fromJson(it, typeToken.type)
-            }
+        client.newCall(request)
+            .enqueue(object : Callback {
 
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string() ?: throw RuntimeException("body is null")
+                    try {
+                        callback.onSuccess(gson.fromJson(body, typeToken.type))
+                    } catch (e: Exception) {
+                        callback.onError(e)
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError(e)
+                }
+
+
+            })
     }
 
 
@@ -89,10 +107,17 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
             .build()
 
         client.newCall(request)
-            .execute()
-            .let {
-                it.body?.string() ?: throw RuntimeException("Body is null")
-            }
+            .enqueue(object : Callback {
+
+                override fun onResponse(call: Call, response: Response) {
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    throw e
+                }
+
+            })
+
 
 
         dao.save(
@@ -117,10 +142,18 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
             .url("$BASE_URL/api/slow/posts/$id/likes")
             .method(method = method, "null".toRequestBody())
             .build()
+
         client.newCall(request)
-            .execute()
-            .let {
-                it.body?.string() ?: throw RuntimeException("Body is null")
-            }
+            .enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    throw e
+                }
+
+
+            })
+
     }
 }
