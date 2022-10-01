@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
 import com.example.nmedia.databinding.ListItemLayoutBinding
 import com.example.nmedia.model.Post
+import com.example.nmedia.viewModels.loadImage
 
 interface PostEventListener {
     fun like(post: Post)
@@ -54,6 +55,7 @@ class PostsAdapter(
                     videoContent.visibility = View.VISIBLE
                     textTitleVideo.text = "Test Video"
                 }
+                imageViewIcon.loadImage(post.authorAvatar , imageViewIcon)
                 textTitle.text = post.author
                 textContent.text = post.content
                 textDate.text = post.published.toString()

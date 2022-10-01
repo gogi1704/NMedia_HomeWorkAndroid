@@ -1,9 +1,11 @@
 package com.example.nmedia.repository
 
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Transformations
+import com.bumptech.glide.Glide
+import com.example.nmedia.BASE_URL
+import com.example.nmedia.METHOD_DELETE
+import com.example.nmedia.METHOD_POST
 import com.example.nmedia.db.PostEntity
 import com.example.nmedia.db.dao.PostDao
 import com.example.nmedia.model.Post
@@ -15,11 +17,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.lang.RuntimeException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
@@ -29,13 +26,14 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
         .build()
     private var gson = Gson()
     private val typeToken = object : TypeToken<List<Post>>() {}
-    private val contentType = "application/json".toMediaType()
+    private val contentTypePost = "application/json".toMediaType()
+    private val contentTypeImage = "image/jpeg".toMediaType()
 
-    companion object {
-        private const val BASE_URL = "http://10.0.2.2:9990"
-        private const val METHOD_DELETE = "DELETE"
-        private const val METHOD_POST = "POST"
-    }
+//    companion object {
+//        private const val BASE_URL = "http://10.0.2.2:9998"
+//        private const val METHOD_DELETE = "DELETE"
+//        private const val METHOD_POST = "POST"
+//    }
 
     override fun getData() = Transformations.map(dao.getAll()) { list ->
         list.map {
@@ -74,8 +72,6 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
                 override fun onFailure(call: Call, e: IOException) {
                     callback.onError(e)
                 }
-
-
             })
     }
 
@@ -103,7 +99,7 @@ class PostRepositoryRoomImpl(private val dao: PostDao) : PostRepository {
 
         val request = Request.Builder()
             .url("$BASE_URL/api/slow/posts")
-            .post(gson.toJson(post).toRequestBody(contentType))
+            .post(gson.toJson(post).toRequestBody(contentTypePost))
             .build()
 
         client.newCall(request)

@@ -17,3 +17,8 @@ const val DEFAULT_VALUE = "null"
 const val DATA_BASE_NAME = "POSTS_DATA_BASE"
 
 
+const  val BASE_URL = "http://10.0.2.2:9998"
+const  val METHOD_DELETE = "DELETE"
+const val METHOD_POST = "POST"
+
+
