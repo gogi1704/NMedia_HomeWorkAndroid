@@ -5,15 +5,13 @@ import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.nmedia.db.AppDb
 import com.example.nmedia.DEFAULT_VALUE
 import com.example.nmedia.DRAFT
 import com.example.nmedia.SingleLiveEvent
 import com.example.nmedia.model.Post
-import com.example.nmedia.repository.PostRepositoryRoomImpl
+import com.example.nmedia.repository.PostRepositoryServer
 import ru.netology.nmedia.model.FeedModel
 import java.io.IOException
-import kotlin.concurrent.thread
 
 
 val emptyPost = Post(
@@ -26,7 +24,7 @@ val emptyPost = Post(
     shares = 0,
     shows = 0,
     likedByMe = false,
-    videoUri = null
+    attachment = null
 
 )
 
@@ -34,9 +32,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPrefDraft = application.getSharedPreferences("draft", MODE_PRIVATE)
     private val sharedPrefEditor = sharedPrefDraft.edit()
 
-
-    private val repository: PostRepository =
-        PostRepositoryRoomImpl(AppDb.getInstance(application).postDao)
+     private val repository = PostRepositoryServer()
+//    private val repository: PostRepository =
+//        PostRepositoryRoomImpl(AppDb.getInstance(application).postDao)
 
 
     private val _data = MutableLiveData(FeedModel())

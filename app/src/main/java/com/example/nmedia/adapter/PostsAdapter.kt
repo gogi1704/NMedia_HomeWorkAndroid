@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
 import com.example.nmedia.databinding.ListItemLayoutBinding
+import com.example.nmedia.model.AttachmentType
 import com.example.nmedia.model.Post
+import com.example.nmedia.viewModels.loadAvatar
 import com.example.nmedia.viewModels.loadImage
 
 interface PostEventListener {
@@ -19,8 +21,6 @@ interface PostEventListener {
     fun openVideo(post: Post)
     fun clickItemShowPost(post: Post)
 }
-
-
 
 
 class PostsAdapter(
@@ -51,11 +51,14 @@ class PostsAdapter(
 
         fun bind(post: Post) {
             with(binding) {
-                if (post.videoUri != null) {
+                if (post.attachment?.type == AttachmentType.IMAGE) {
                     videoContent.visibility = View.VISIBLE
-                    textTitleVideo.text = "Test Video"
+                    textTitleVideo.text = post.attachment.description
+                    imageAttachments.loadImage(imageAttachments, post.attachment)
                 }
-                imageViewIcon.loadImage(post.authorAvatar , imageViewIcon)
+
+
+                imageViewIcon.loadAvatar(post.authorAvatar, imageViewIcon)
                 textTitle.text = post.author
                 textContent.text = post.content
                 textDate.text = post.published.toString()
@@ -64,7 +67,7 @@ class PostsAdapter(
                 textShowsCount.text = post.showCounts(post.shows)
                 buttonLike.isChecked = post.likedByMe
 
-                imageVideo.setOnClickListener {
+                imageAttachments.setOnClickListener {
                     listener.openVideo(post)
                 }
 
@@ -76,7 +79,7 @@ class PostsAdapter(
                     listener.share(post)
                 }
 
-                itemView.setOnClickListener{
+                itemView.setOnClickListener {
                     clickItem(post)
                 }
 
@@ -104,7 +107,7 @@ class PostsAdapter(
             }
         }
 
-        private fun clickItem(post: Post){
+        private fun clickItem(post: Post) {
             listener.clickItemShowPost(post)
         }
     }
