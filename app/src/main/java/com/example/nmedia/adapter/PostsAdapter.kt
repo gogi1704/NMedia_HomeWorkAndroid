@@ -52,9 +52,11 @@ class PostsAdapter(
         fun bind(post: Post) {
             with(binding) {
                 if (post.attachment?.type == AttachmentType.IMAGE) {
-                    videoContent.visibility = View.VISIBLE
+                    attachmentContent.visibility = View.VISIBLE
                     textTitleVideo.text = post.attachment.description
                     imageAttachments.loadImage(imageAttachments, post.attachment)
+                }else{
+                    attachmentContent.visibility = View.GONE
                 }
 
 

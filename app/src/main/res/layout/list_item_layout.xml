@@ -69,7 +69,7 @@
         app:constraint_referenced_ids="imageView_icon" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/video_content"
+        android:id="@+id/attachment_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -130,7 +130,7 @@
         android:checkable="true"
         android:gravity="start|center"
         app:icon="@drawable/ic_like_adaptive"
-        app:layout_constraintTop_toBottomOf="@id/video_content"
+        app:layout_constraintTop_toBottomOf="@id/attachment_content"
         tools:text="12" />
 
 
@@ -144,7 +144,7 @@
         app:icon="@drawable/ic_share_adaptive"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button_like"
-        app:layout_constraintTop_toBottomOf="@+id/video_content"
+        app:layout_constraintTop_toBottomOf="@+id/attachment_content"
         tools:text="12" />
 
 
@@ -157,7 +157,7 @@
 
         android:contentDescription="@string/shows_icon"
         app:layout_constraintEnd_toStartOf="@+id/text_shows_count"
-        app:layout_constraintTop_toBottomOf="@id/video_content"
+        app:layout_constraintTop_toBottomOf="@id/attachment_content"
         app:srcCompat="@drawable/ic_shows_24" />
 
     <TextView
@@ -167,6 +167,6 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/image_shows"
         app:layout_constraintEnd_toEndOf="@id/button_more"
-        app:layout_constraintTop_toBottomOf="@id/video_content"
+        app:layout_constraintTop_toBottomOf="@id/attachment_content"
         tools:text="22" />
 </androidx.constraintlayout.widget.ConstraintLayout>
