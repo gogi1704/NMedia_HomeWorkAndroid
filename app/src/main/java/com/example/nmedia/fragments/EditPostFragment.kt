@@ -55,7 +55,8 @@ class EditPostFragment : Fragment() {
                             likes = buttonLike.text.toString().toInt(),
                             shares = buttonShare.text.toString().toInt(),
                             shows = textShowsCount.text.toString().toInt(),
-                            likedByMe = buttonLike.isChecked
+                            likedByMe = buttonLike.isChecked,
+                            attachment = null
                         )
                     )
                     viewModel.savePost()

@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.example.nmedia.*
 import com.example.nmedia.adapter.PostEventListener
 import com.example.nmedia.adapter.PostsAdapter
 import com.example.nmedia.databinding.FragmentMainBinding
+import com.example.nmedia.model.AttachmentType
 import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostViewModel
 
@@ -73,9 +73,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun openVideo(post: Post) {
-                    val webpage: Uri = Uri.parse(post.videoUri)
-                    val intent = Intent(Intent.ACTION_VIEW, webpage)
-                    startActivity(intent)
+                    if (post.attachment?.type == AttachmentType.VIDEO){
+                        val webpage: Uri = Uri.parse(post.attachment.url)
+                        val intent = Intent(Intent.ACTION_VIEW, webpage)
+                        startActivity(intent)
+                    }
+
                 }
 
 
@@ -126,7 +129,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             putInt(LIKES, post.likes)
             putInt(SHARES, post.shares)
             putInt(SHOWS, post.shows)
-            putString(URI, post.videoUri)
+           // putString(URI, post.attachments)
             putBoolean(ISLIKED, post.likedByMe)
 
         }

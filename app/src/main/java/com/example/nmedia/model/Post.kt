@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Post(
+
     val id: Int,
     val author: String,
     val published: Int,
@@ -13,7 +14,7 @@ data class Post(
     val likes: Int = 0,
     val shares: Int,
     val shows: Int,
-    val videoUri: String? = null,
+    val attachment: Attachment?,
     var likedByMe: Boolean = false
 ) : Parcelable {
 
