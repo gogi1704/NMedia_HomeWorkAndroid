@@ -59,7 +59,7 @@ class EditPostFragment : Fragment() {
                             attachment = null
                         )
                     )
-                    viewModel.savePost()
+                    viewModel.savePost(parentFragmentManager)
                 }
                 findNavController().navigate(R.id.action_editPostFragment_to_mainFragment)
 

@@ -12,10 +12,10 @@ interface PostRepository {
     fun remove(id: Int)
     fun savePost(post: Post)
    // fun getDataServer(): List<Post>
-    fun getDataFromServer(callback: GetAllCallback)
+    fun getDataFromServer(callback: GetAllCallback<List<Post>>)
 
-    interface GetAllCallback {
-        fun onSuccess(posts: List<Post>)
+    interface GetAllCallback <T> {
+        fun onSuccess(posts:T)
         fun onError(e: Exception)
     }
 

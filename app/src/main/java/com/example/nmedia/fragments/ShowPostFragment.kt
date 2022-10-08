@@ -61,7 +61,7 @@ class ShowPostFragment : Fragment() {
                     setOnMenuItemClickListener { itemView ->
                         when (itemView.itemId) {
                             R.id.remove -> {
-                                viewModel.remove(requireArguments().getInt(ID))
+                                viewModel.remove(requireArguments().getInt(ID),parentFragmentManager)
                                 findNavController().navigateUp()
                                 return@setOnMenuItemClickListener true
 

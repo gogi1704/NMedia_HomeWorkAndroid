@@ -33,6 +33,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
          swipeToRefresh = binding.refreshSwipe
         val recycler = binding.recyclerListPosts
+
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
@@ -40,7 +41,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun clickItemShowPost(post: Post) {
-
                     findNavController()
                         .navigate(
                             R.id.action_mainFragment_to_showPostFragment,
@@ -60,7 +60,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun remove(post: Post) {
-                    viewModel.remove(post.id)
+                    viewModel.remove(post.id , parentFragmentManager)
+
                 }
 
                 override fun update(post: Post) {
@@ -87,6 +88,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         recycler.adapter = adapter
         binding.fabAddPost.setOnClickListener() {
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
+
         }
 
         viewModel.data.observe(viewLifecycleOwner) { state ->

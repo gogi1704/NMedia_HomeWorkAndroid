@@ -2,23 +2,26 @@ package com.example.nmedia.viewModels
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
+import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.DEFAULT_VALUE
 import com.example.nmedia.DRAFT
 import com.example.nmedia.SingleLiveEvent
+import com.example.nmedia.fragments.MyDialogFragmentCreatePostError
+import com.example.nmedia.fragments.MyDialogFragmentRemovePostError
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
 import ru.netology.nmedia.model.FeedModel
-import java.io.IOException
 
 
 val emptyPost = Post(
     id = 0,
-    author = "default title",
+    author = "Netology",
     content = "default content",
-    authorAvatar = "",
+    authorAvatar = "netology.jpg",
     published = 0,
     likes = 0,
     shares = 0,
@@ -31,8 +34,10 @@ val emptyPost = Post(
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPrefDraft = application.getSharedPreferences("draft", MODE_PRIVATE)
     private val sharedPrefEditor = sharedPrefDraft.edit()
+    private val repository = PostRepositoryServer()
 
-     private val repository = PostRepositoryServer()
+    private val dialog = MyDialogFragmentCreatePostError()
+
 //    private val repository: PostRepository =
 //        PostRepositoryRoomImpl(AppDb.getInstance(application).postDao)
 
@@ -49,14 +54,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun loadPost() {
+
         _data.value = FeedModel(loading = true)
-        repository.getDataFromServer(object : PostRepository.GetAllCallback {
+        repository.getDataFromServer(object : PostRepository.GetAllCallback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts, isEmpty = posts.isEmpty()))
+                _data.value = FeedModel(posts = posts, isEmpty = posts.isEmpty())
             }
 
             override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
+                _data.value = FeedModel(error = true)
             }
         })
 
@@ -65,32 +71,65 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun like(id: Int, isLiked: Boolean) {
-            repository.like(id, isLiked)
-            likePost(id)
+
+        repository.like(id, isLiked, object : PostRepository.GetAllCallback<Post> {
+            override fun onSuccess(posts: Post) {
+                likePost(id)
+            }
+
+            override fun onError(e: Exception) {
+                Toast.makeText(getApplication(), "Server not found", Toast.LENGTH_LONG).show()
+            }
+        })
+
     }
 
-    fun share(id: Int) =  repository.share(id)
+    fun share(id: Int) = repository.share(id)
 
-    fun remove(id: Int) {
-        repository.remove(id)
+    fun remove(id: Int, fragmentManager: FragmentManager) {
+
         val old = _data.value?.posts.orEmpty()
-        _data.postValue(
-            _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                .filter { it.id != id })
-        )
+        _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty()
+            .filter { it.id != id })
 
-        try {
-            repository.remove(id)
-        } catch (io: IOException) {
-            _data.postValue(_data.value?.copy(posts = old))
-        }
+        repository.remove(id, object : PostRepository.GetAllCallback<Unit> {
+
+            override fun onSuccess(posts: Unit) {
+                Toast.makeText(getApplication() , "Deleted successfully" , Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(e: Exception) {
+                val dialogRemove = MyDialogFragmentRemovePostError(id)
+                dialogRemove.show(fragmentManager, "error")
+                _data.postValue(_data.value?.copy(posts = old))
+
+            }
+        })
+
+
+//        try {
+//            repository.remove(id)
+//        } catch (io: IOException) {
+//            _data.postValue(_data.value?.copy(posts = old))
+//        }
 
     }
 
-    fun savePost() {
+    fun savePost(fragmentManager: FragmentManager) {
         editedLiveData.value?.let {
-                repository.savePost(it)
-                _postCreated.postValue(Unit)
+            repository.savePost(it, object : PostRepository.GetAllCallback<Unit> {
+                override fun onSuccess(posts: Unit) {
+                    clearSharedPref()
+                }
+
+                override fun onError(e: Exception) {
+                    dialog.show(fragmentManager, "error")
+                }
+            })
+
+            _postCreated.postValue(Unit)
+
+
         }
         editedLiveData.value = emptyPost
     }
@@ -148,7 +187,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         listPost?.set(index!!, post!!)
         listPost as List<Post>
-        _data.postValue(_data.value?.copy(posts = listPost))
+        _data.value = _data.value?.copy(posts = listPost)
     }
 }
 
