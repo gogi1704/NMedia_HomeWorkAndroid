@@ -24,9 +24,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders.usesClearTextTraffic = false
+            buildConfigField "String", "BASE_URL", '"http://10.0.2.2:9992/api/"'
+
         }
-        debug{
-           manifestPlaceholders.usesClearTextTraffic = true
+        debug {
+            manifestPlaceholders.usesClearTextTraffic = true
+            buildConfigField "String", "BASE_URL", '"http://10.0.2.2:9992/api/slow/"'
         }
 
     }
@@ -61,6 +64,7 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")

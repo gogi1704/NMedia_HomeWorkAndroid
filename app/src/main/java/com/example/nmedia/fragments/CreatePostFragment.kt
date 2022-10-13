@@ -44,12 +44,12 @@ class CreatePostFragment : Fragment() {
             val text = binding.textEdit.text.toString()
             if (binding.textEdit.text.isNotBlank()) {
                 viewModel.editContent(text)
-                viewModel.savePost(parentFragmentManager)
+                viewModel.savePost()
             }
 
         }
 
-        viewModel.postCreated.observe(viewLifecycleOwner){
+        viewModel.postCreated.observe(viewLifecycleOwner) {
             val text = binding.textEdit.text.toString()
             if (text.isNotBlank()) {
                 viewModel.putSharedPref(text)

@@ -3,15 +3,12 @@ package com.example.nmedia.viewModels
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.DEFAULT_VALUE
 import com.example.nmedia.DRAFT
 import com.example.nmedia.SingleLiveEvent
-import com.example.nmedia.fragments.MyDialogFragmentCreatePostError
-import com.example.nmedia.fragments.MyDialogFragmentRemovePostError
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
 import ru.netology.nmedia.model.FeedModel
@@ -36,10 +33,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPrefEditor = sharedPrefDraft.edit()
     private val repository = PostRepositoryServer()
 
-    private val dialog = MyDialogFragmentCreatePostError()
-
-//    private val repository: PostRepository =
-//        PostRepositoryRoomImpl(AppDb.getInstance(application).postDao)
+    private val checkError = false
+    val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
 
     private val _data = MutableLiveData(FeedModel())
@@ -75,10 +70,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.like(id, isLiked, object : PostRepository.GetAllCallback<Post> {
             override fun onSuccess(posts: Post) {
                 likePost(id)
+
             }
 
             override fun onError(e: Exception) {
                 Toast.makeText(getApplication(), "Server not found", Toast.LENGTH_LONG).show()
+                _data.value = data.value
             }
         })
 
@@ -86,7 +83,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun share(id: Int) = repository.share(id)
 
-    fun remove(id: Int, fragmentManager: FragmentManager) {
+    fun remove(id: Int) {
 
         val old = _data.value?.posts.orEmpty()
         _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty()
@@ -95,27 +92,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.remove(id, object : PostRepository.GetAllCallback<Unit> {
 
             override fun onSuccess(posts: Unit) {
-                Toast.makeText(getApplication() , "Deleted successfully" , Toast.LENGTH_SHORT).show()
+                Toast.makeText(getApplication(), "Deleted successfully", Toast.LENGTH_SHORT).show()
             }
 
             override fun onError(e: Exception) {
-                val dialogRemove = MyDialogFragmentRemovePostError(id)
-                dialogRemove.show(fragmentManager, "error")
+                Toast.makeText(getApplication() , "Deletion error" , Toast.LENGTH_LONG).show()
                 _data.postValue(_data.value?.copy(posts = old))
 
             }
         })
 
 
-//        try {
-//            repository.remove(id)
-//        } catch (io: IOException) {
-//            _data.postValue(_data.value?.copy(posts = old))
-//        }
-
     }
 
-    fun savePost(fragmentManager: FragmentManager) {
+    fun savePost() {
         editedLiveData.value?.let {
             repository.savePost(it, object : PostRepository.GetAllCallback<Unit> {
                 override fun onSuccess(posts: Unit) {
@@ -123,14 +113,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 override fun onError(e: Exception) {
-                    dialog.show(fragmentManager, "error")
+                    errorCreateFragmentLiveData.value = true
+
                 }
             })
 
-            _postCreated.postValue(Unit)
-
-
         }
+        _postCreated.postValue(Unit)
         editedLiveData.value = emptyPost
     }
 
@@ -189,5 +178,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         listPost as List<Post>
         _data.value = _data.value?.copy(posts = listPost)
     }
+
 }
 
