@@ -66,17 +66,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun like(id: Int, isLiked: Boolean) {
-
+        val old = _data.value?.posts
+        likePost(id)
         repository.like(id, isLiked, object : PostRepository.GetAllCallback<Post> {
             override fun onSuccess(posts: Post) {
-                likePost(id)
 
             }
 
             override fun onError(e: Exception) {
-                Toast.makeText(getApplication(), "Server not found", Toast.LENGTH_LONG).show()
-                _data.value = data.value
+                Toast.makeText(getApplication(), "Server not found. Try again", Toast.LENGTH_LONG).show()
+                _data.postValue(_data.value?.copy(posts = old!!))
             }
+
         })
 
     }
