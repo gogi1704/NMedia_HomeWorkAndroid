@@ -22,7 +22,7 @@ import com.example.nmedia.viewModels.PostViewModel
 class MainFragment : Fragment(R.layout.fragment_main) {
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private lateinit var binding: FragmentMainBinding
-    private lateinit var swipeToRefresh:SwipeRefreshLayout
+    private lateinit var swipeToRefresh: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,16 +31,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     ): View {
         viewModel.loadPost()
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
-         swipeToRefresh = binding.refreshSwipe
+        swipeToRefresh = binding.refreshSwipe
         val recycler = binding.recyclerListPosts
+
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
-                    viewModel.like(post.id , post.likedByMe)
+                    viewModel.like(post.id, post.likedByMe)
                 }
 
                 override fun clickItemShowPost(post: Post) {
-
                     findNavController()
                         .navigate(
                             R.id.action_mainFragment_to_showPostFragment,
@@ -61,6 +61,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 override fun remove(post: Post) {
                     viewModel.remove(post.id)
+
                 }
 
                 override fun update(post: Post) {
@@ -73,7 +74,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun openVideo(post: Post) {
-                    if (post.attachment?.type == AttachmentType.VIDEO){
+                    if (post.attachment?.type == AttachmentType.VIDEO) {
                         val webpage: Uri = Uri.parse(post.attachment.url)
                         val intent = Intent(Intent.ACTION_VIEW, webpage)
                         startActivity(intent)
@@ -87,6 +88,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         recycler.adapter = adapter
         binding.fabAddPost.setOnClickListener() {
             findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
+
         }
 
         viewModel.data.observe(viewLifecycleOwner) { state ->
@@ -98,6 +100,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter.submitList(state.posts)
         }
 
+        viewModel.errorCreateFragmentLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                MyDialogFragmentCreatePostError().show(parentFragmentManager, "create")
+            }
+        }
+
 
         viewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
 
@@ -107,19 +115,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         }
 
-        binding.buttonRetry.setOnClickListener(){
+        binding.buttonRetry.setOnClickListener() {
             viewModel.loadPost()
         }
 
-       swipeToRefresh.setOnRefreshListener {
-           swipeToRefresh.isRefreshing = false
-           viewModel.loadPost()
-       }
+        swipeToRefresh.setOnRefreshListener {
+            swipeToRefresh.isRefreshing = false
+            viewModel.loadPost()
+        }
 
         return binding.root
     }
 
-    fun createPostBundle(post: Post): Bundle {
+    private fun createPostBundle(post: Post): Bundle {
         println(post)
         return Bundle().apply {
             putInt(ID, post.id)
@@ -129,11 +137,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             putInt(LIKES, post.likes)
             putInt(SHARES, post.shares)
             putInt(SHOWS, post.shows)
-           // putString(URI, post.attachments)
+            // putString(URI, post.attachments)
             putBoolean(ISLIKED, post.likedByMe)
 
         }
     }
+
+
 
 }
 

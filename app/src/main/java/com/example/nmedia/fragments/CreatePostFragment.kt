@@ -45,14 +45,15 @@ class CreatePostFragment : Fragment() {
             if (binding.textEdit.text.isNotBlank()) {
                 viewModel.editContent(text)
                 viewModel.savePost()
-
-                viewModel.clearSharedPref()
             }
 
         }
 
-        viewModel.postCreated.observe(viewLifecycleOwner){
-            viewModel.loadPost()
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            val text = binding.textEdit.text.toString()
+            if (text.isNotBlank()) {
+                viewModel.putSharedPref(text)
+            }
             findNavController().navigateUp()
         }
 

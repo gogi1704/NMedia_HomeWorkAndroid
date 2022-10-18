@@ -3,8 +3,7 @@ package com.example.nmedia.repository
 
 import androidx.lifecycle.Transformations
 import com.example.nmedia.BASE_URL
-import com.example.nmedia.METHOD_DELETE
-import com.example.nmedia.METHOD_POST
+
 import com.example.nmedia.db.dao.PostDao
 import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostRepository
