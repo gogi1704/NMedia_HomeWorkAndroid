@@ -51,6 +51,10 @@ class PostsAdapter(
 
         fun bind(post: Post) {
             with(binding) {
+                if (!post.isSendToServer){
+                    imageErrorSend.visibility = View.VISIBLE
+                }else imageErrorSend.visibility = View.GONE
+
                 if (post.attachment?.type == AttachmentType.IMAGE) {
                     attachmentContent.visibility = View.VISIBLE
                     textTitleVideo.text = post.attachment.description

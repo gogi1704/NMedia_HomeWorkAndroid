@@ -6,6 +6,7 @@ import com.example.nmedia.model.Post
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -13,7 +14,7 @@ import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 
 private val logging = HttpLoggingInterceptor().apply {
-    if (BuildConfig.DEBUG){
+    if (BuildConfig.DEBUG) {
         level = HttpLoggingInterceptor.Level.BODY
     }
 }
@@ -32,19 +33,19 @@ private val retrofit = Retrofit.Builder()
 
 interface PostsRetrofitService {
     @GET("posts")
-    fun getAll(): Call<List<Post>>
+    suspend fun getAll():Response< List<Post>>
 
     @POST("posts")
-    fun savePost(@Body post: Post): Call<Post>
+    suspend fun savePost(@Body post: Post):Response<Post>
 
     @DELETE("posts/{id}")
-    fun deletePost(@Path("id") id: Int): Call<Unit>
+    suspend fun deletePost(@Path("id") id: Long):Response<Unit>
 
     @POST("posts/{id}/likes")
-    fun like(@Path("id") id: Int): Call<Post>
+    suspend fun like(@Path("id") id: Long): Response<Post>
 
     @DELETE("posts/{id}/likes")
-    fun disLike(@Path("id") id: Int): Call<Post>
+    suspend fun disLike(@Path("id") id: Long): Response<Post>
 
 
 }

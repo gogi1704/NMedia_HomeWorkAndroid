@@ -2,44 +2,52 @@ package com.example.nmedia.viewModels
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.nmedia.DEFAULT_VALUE
-import com.example.nmedia.DRAFT
-import com.example.nmedia.SingleLiveEvent
+import androidx.lifecycle.*
+import com.example.nmedia.*
+import com.example.nmedia.db.AppDb
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
+import ru.netology.nmedia.model.FeedModelState
+import java.time.OffsetDateTime
 
 
 val emptyPost = Post(
     id = 0,
     author = "Netology",
-    content = "default content",
+    published = 12442341L,
+    content = "content",
     authorAvatar = "netology.jpg",
-    published = 0,
     likes = 0,
     shares = 0,
     shows = 0,
     likedByMe = false,
-    attachment = null
+    attachment = null,
+    isSendToServer = false
 
 )
+var countErrorPost = -1L
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPrefDraft = application.getSharedPreferences("draft", MODE_PRIVATE)
     private val sharedPrefEditor = sharedPrefDraft.edit()
-    private val repository = PostRepositoryServer()
+    private val repository = PostRepositoryServer(AppDb.getInstance(application).postDao)
 
     private val checkError = false
     val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
+    private val _data: LiveData<FeedModel> = repository.data
+        .map { FeedModel(posts = it .filter { post -> !post.isSendToServer } + it.filter {  post -> post.isSendToServer })
+    }
 
-    private val _data = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel>
         get() = _data
+
+    private val _dataState = MutableLiveData<FeedModelState>()
+    val dataState: LiveData<FeedModelState>
+        get() = _dataState
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -48,81 +56,65 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val editedLiveData = MutableLiveData(emptyPost)
 
 
+    init {
+        loadPost()
+    }
+
     fun loadPost() {
-
-        _data.value = FeedModel(loading = true)
-        repository.getDataFromServer(object : PostRepository.GetAllCallback<List<Post>> {
-            override fun onSuccess(posts: List<Post>) {
-                _data.value = FeedModel(posts = posts, isEmpty = posts.isEmpty())
+        viewModelScope.launch {
+            try {
+                _dataState.value = FeedModelState(loading = true)
+                repository.getAll()
+                _dataState.value = FeedModelState()
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(errorType = ERROR_LOAD)
             }
-
-            override fun onError(e: Exception) {
-                _data.value = FeedModel(error = true)
-            }
-        })
-
+        }
 
     }
 
 
-    fun like(id: Int, isLiked: Boolean) {
-        val old = _data.value?.posts
-        likePost(id)
-        repository.like(id, isLiked, object : PostRepository.GetAllCallback<Post> {
-            override fun onSuccess(posts: Post) {
+    fun like(id: Long, isLiked: Boolean) {
 
+        viewModelScope.launch {
+            try {
+                repository.like(id, isLiked)
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(errorType = ERROR_LIKE)
             }
+        }
 
-            override fun onError(e: Exception) {
-                Toast.makeText(getApplication(), "Server not found. Try again", Toast.LENGTH_LONG).show()
-                _data.postValue(_data.value?.copy(posts = old!!))
-            }
-
-        })
 
     }
 
-    fun share(id: Int) = repository.share(id)
+    fun share(id: Long) = repository.share(id)
 
-    fun remove(id: Int) {
+    fun remove(id: Long) {
 
-        val old = _data.value?.posts.orEmpty()
-        _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty()
-            .filter { it.id != id })
-
-        repository.remove(id, object : PostRepository.GetAllCallback<Unit> {
-
-            override fun onSuccess(posts: Unit) {
-                Toast.makeText(getApplication(), "Deleted successfully", Toast.LENGTH_SHORT).show()
+        viewModelScope.launch {
+            try {
+                repository.remove(id)
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(errorType = ERROR_REMOVE)
             }
-
-            override fun onError(e: Exception) {
-                Toast.makeText(getApplication() , "Deletion error" , Toast.LENGTH_LONG).show()
-                _data.postValue(_data.value?.copy(posts = old))
-
-            }
-        })
-
-
+        }
     }
 
     fun savePost() {
-        editedLiveData.value?.let {
-            repository.savePost(it, object : PostRepository.GetAllCallback<Unit> {
-                override fun onSuccess(posts: Unit) {
-                    clearSharedPref()
-                }
-
-                override fun onError(e: Exception) {
-                    errorCreateFragmentLiveData.value = true
-
-                }
-            })
-
+        viewModelScope.launch {
+            try {
+                _postCreated.postValue(Unit)
+                repository.savePost(editedLiveData.value!!)
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(errorType = ERROR_REMOVE)
+            }
+            clearSharedPref()
         }
-        _postCreated.postValue(Unit)
+        countErrorPost--
+
         editedLiveData.value = emptyPost
     }
+
 
     fun edit(post: Post) {
         editedLiveData.value = post
@@ -135,7 +127,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             if (trimContent == it.content) {
                 return
             } else {
-                editedLiveData.value = editedLiveData.value?.copy(content = trimContent)
+                editedLiveData.value =
+                    editedLiveData.value?.copy(content = trimContent, id = countErrorPost)
             }
         }
     }
@@ -155,14 +148,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         sharedPrefEditor.commit()
     }
 
-    fun getPostById(id: Int): Post {
+    fun getPostById(id: Long): Post {
         val listPosts = data.value?.posts?.filter {
             it.id == id
         }
         return listPosts!![0]
     }
 
-    private fun likePost(id: Int) {
+    private fun likePost(id: Long) {
         val listPost = _data.value?.posts?.toMutableList()
         val filteredList = _data.value?.posts?.filter {
             it.id == id
@@ -177,8 +170,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         listPost?.set(index!!, post!!)
         listPost as List<Post>
-        _data.value = _data.value?.copy(posts = listPost)
+        //  _data.value = _data.value?.copy(posts = listPost)
     }
+
 
 }
 

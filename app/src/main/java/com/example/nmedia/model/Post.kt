@@ -6,19 +6,20 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Post(
 
-    val id: Int,
+    val id: Long,
     val author: String,
-    val published: Int,
+    val published: Long,
     val content: String,
     val authorAvatar:String = "",
-    val likes: Int = 0,
-    val shares: Int,
-    val shows: Int,
-    val attachment: Attachment?,
-    var likedByMe: Boolean = false
+    val likes: Long = 0,
+    val shares: Long,
+    val shows: Long,
+    val attachment: Attachment? = null,
+    var likedByMe: Boolean = false,
+    val isSendToServer : Boolean = false
 ) : Parcelable {
 
-    fun showCounts(num: Int): String {
+    fun showCounts(num: Long): String {
         val str: String = if (num < 1000) {
             "$num"
         } else if (num in 1000..9999) {

@@ -26,7 +26,7 @@ class EditPostFragment : Fragment() {
 
 
             with(binding) {
-                val post = viewModel.getPostById(requireArguments().getInt(ID))
+                val post = viewModel.getPostById(requireArguments().getLong(ID))
                 textTitle.text = post.author
                 textContent.text = post.content
                 textDate.text = post.published.toString()
@@ -45,16 +45,16 @@ class EditPostFragment : Fragment() {
 
             fabSave.setOnClickListener() {
                 val text = binding.createContent.text.toString()
-                if (text != viewModel.getPostById(requireArguments().getInt(ID)).content) {
+                if (text != viewModel.getPostById(requireArguments().getLong(ID)).content) {
                     viewModel.edit(
                         Post(
-                            id = requireArguments().getInt(ID),
+                            id = requireArguments().getLong(ID),
                             author = textTitle.text.toString(),
-                            published = textDate.text.toString().toInt(),
+                            published = textDate.text.toString().toLong(),
                             content = text,
-                            likes = buttonLike.text.toString().toInt(),
-                            shares = buttonShare.text.toString().toInt(),
-                            shows = textShowsCount.text.toString().toInt(),
+                            likes = buttonLike.text.toString().toLong(),
+                            shares = buttonShare.text.toString().toLong(),
+                            shows = textShowsCount.text.toString().toLong(),
                             likedByMe = buttonLike.isChecked,
                             attachment = null
                         )

@@ -3,9 +3,11 @@ package com.example.nmedia.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +20,7 @@ import com.example.nmedia.databinding.FragmentMainBinding
 import com.example.nmedia.model.AttachmentType
 import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainFragment : Fragment(R.layout.fragment_main) {
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
@@ -41,11 +44,21 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 override fun clickItemShowPost(post: Post) {
-                    findNavController()
-                        .navigate(
-                            R.id.action_mainFragment_to_showPostFragment,
-                            createPostBundle(post)
-                        )
+                    if (!post.isSendToServer) {
+                        Snackbar.make(requireView(), "Send post to server ?", Snackbar.LENGTH_LONG)
+                            .setAction("Send") {
+                                viewModel.editContent(post.content)
+                                viewModel.savePost()
+                            }
+                            .show()
+                    } else {
+                        findNavController()
+                            .navigate(
+                                R.id.action_mainFragment_to_showPostFragment,
+                                createPostBundle(post)
+                            )
+                    }
+
 
                 }
 
@@ -61,7 +74,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 override fun remove(post: Post) {
                     viewModel.remove(post.id)
-
                 }
 
                 override fun update(post: Post) {
@@ -91,13 +103,30 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            with(binding) {
-                progressBar.isVisible = state.loading
-                errorGroup.isVisible = state.error
-                textIsEmpty.isVisible = state.isEmpty
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            swipeToRefresh.isRefreshing = state.loading
+            when (state.errorType) {
+                ERROR_LOAD -> Snackbar
+                    .make(
+                        requireView(),
+                        "Loading error! Swipe to refresh or click ->",
+                        Snackbar.LENGTH_LONG
+                    )
+                    .setAction("Retry") { viewModel.loadPost() }
+                    .show()
+                ERROR_REMOVE -> Snackbar
+                    .make(requireView(), "Remove error.Please repeat", Snackbar.LENGTH_LONG)
+                    .show()
+                ERROR_LIKE -> Snackbar
+                    .make(requireView(), "Like error.Please repeat", Snackbar.LENGTH_LONG)
+                    .show()
             }
+
+
+        }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
+            binding.textIsEmpty.isVisible = state.isEmpty
         }
 
         viewModel.errorCreateFragmentLiveData.observe(viewLifecycleOwner) {
@@ -109,15 +138,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         viewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
 
-            if (editPost.id == -1) {
+            if (editPost.id == -1L) {
                 return@observe
             }
 
         }
 
-        binding.buttonRetry.setOnClickListener() {
-            viewModel.loadPost()
-        }
+
 
         swipeToRefresh.setOnRefreshListener {
             swipeToRefresh.isRefreshing = false
@@ -130,19 +157,18 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private fun createPostBundle(post: Post): Bundle {
         println(post)
         return Bundle().apply {
-            putInt(ID, post.id)
+            putLong(ID, post.id)
             putString(TITLE, post.author)
             putString(CONTENT, post.content)
             putString(DATE, post.published.toString())
-            putInt(LIKES, post.likes)
-            putInt(SHARES, post.shares)
-            putInt(SHOWS, post.shows)
+            putLong(LIKES, post.likes)
+            putLong(SHARES, post.shares)
+            putLong(SHOWS, post.shows)
             // putString(URI, post.attachments)
             putBoolean(ISLIKED, post.likedByMe)
 
         }
     }
-
 
 
 }

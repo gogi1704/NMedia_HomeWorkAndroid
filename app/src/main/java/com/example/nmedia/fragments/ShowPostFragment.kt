@@ -25,7 +25,7 @@ class ShowPostFragment : Fragment() {
 
 
         with(binding) {
-            val post = viewModel.getPostById(requireArguments().getInt(ID))
+            val post = viewModel.getPostById(requireArguments().getLong(ID))
             textTitle.text = post.author
             textContent.text = post.content
             textDate.text = post.published.toString()
@@ -38,7 +38,7 @@ class ShowPostFragment : Fragment() {
                 val likes:Int = if (buttonLike.isChecked) buttonLike.text.toString().toInt() + 1
                 else buttonLike.text.toString().toInt() - 1
                 buttonLike.text = likes.toString()
-                viewModel.like( requireArguments().getInt(ID) , post.likedByMe)
+                viewModel.like( requireArguments().getLong(ID) , post.likedByMe)
 
             }
 
@@ -51,7 +51,7 @@ class ShowPostFragment : Fragment() {
                 startActivity(intent)
                 val shares = buttonShare.text.toString().toInt()+1
                 buttonShare.text = shares.toString()
-                viewModel.share( requireArguments().getInt(ID))
+                viewModel.share( requireArguments().getLong(ID))
             }
 
             buttonMore.setOnClickListener(){
@@ -61,7 +61,7 @@ class ShowPostFragment : Fragment() {
                     setOnMenuItemClickListener { itemView ->
                         when (itemView.itemId) {
                             R.id.remove -> {
-                                viewModel.remove(requireArguments().getInt(ID))
+                                viewModel.remove(requireArguments().getLong(ID))
                                 findNavController().navigateUp()
                                 return@setOnMenuItemClickListener true
 
