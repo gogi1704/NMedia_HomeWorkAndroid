@@ -103,6 +103,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         }
 
+        binding.buttonUncheckedPosts.setOnClickListener {
+            binding.buttonUncheckedPosts.visibility = View.GONE
+            viewModel.checkPosts()
+            recycler.smoothScrollToPosition(0)
+        }
+
+
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             swipeToRefresh.isRefreshing = state.loading
             when (state.errorType) {
@@ -122,12 +129,22 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     .show()
             }
 
-
         }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            with(binding) {
+                if (it != 0) {
+                    buttonUncheckedPosts.visibility = View.VISIBLE
+                    getString(R.string.To_new_posts) + " ( $it )"
+                }
+            }
+        }
+
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.textIsEmpty.isVisible = state.isEmpty
         }
+
 
         viewModel.errorCreateFragmentLiveData.observe(viewLifecycleOwner) {
             if (it) {

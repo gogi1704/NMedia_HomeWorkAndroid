@@ -7,12 +7,16 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.nmedia.db.PostEntity
 import com.example.nmedia.model.Post
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-     fun getAll(): LiveData<List<PostEntity>>
+   suspend  fun getAll(): List<PostEntity>
+
+    @Query("SELECT * FROM PostEntity WHERE isChecked = 1  ORDER BY id DESC ")
+    fun getAllChecked(): Flow<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)

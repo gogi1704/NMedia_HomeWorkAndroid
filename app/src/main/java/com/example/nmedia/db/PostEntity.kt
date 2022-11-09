@@ -19,14 +19,16 @@ data class PostEntity(
     val shows: Long,
    // val attachments: Attachment? = null,
     val likedByMe: Boolean = false,
-    val isSendToServer : Boolean = false
+    val isSendToServer : Boolean = false,
+    var isChecked : Boolean = false
+
 
 
 ){
-    fun toDto() = Post(id, author, published ,content,authorAvatar,likes ,shares , shows, null,likedByMe , isSendToServer )
+    fun toDto() = Post(id, author, published ,content,authorAvatar,likes ,shares , shows, null,likedByMe , isSendToServer ,isChecked)
 
     companion object {
-        fun fromDto(dto: Post) = PostEntity(dto.id, dto.author, dto.published, dto.content, dto.authorAvatar, dto.likes, dto.shares , dto.shows , dto.likedByMe,dto.isSendToServer )
+        fun fromDto(dto: Post) = PostEntity(dto.id, dto.author, dto.published, dto.content, dto.authorAvatar, dto.likes, dto.shares , dto.shows , dto.likedByMe,dto.isSendToServer ,dto.isChecked)
 
     }
 }
