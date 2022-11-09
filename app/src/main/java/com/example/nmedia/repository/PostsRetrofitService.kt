@@ -5,7 +5,6 @@ import com.example.nmedia.BuildConfig
 import com.example.nmedia.model.Post
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -33,13 +32,16 @@ private val retrofit = Retrofit.Builder()
 
 interface PostsRetrofitService {
     @GET("posts")
-    suspend fun getAll():Response< List<Post>>
+    suspend fun getAll(): Response<List<Post>>
+
+    @GET("posts/{id}/newer")
+    suspend fun getAllNewer(@Path("id") id: Long): Response<List<Post>>
 
     @POST("posts")
-    suspend fun savePost(@Body post: Post):Response<Post>
+    suspend fun savePost(@Body post: Post): Response<Post>
 
     @DELETE("posts/{id}")
-    suspend fun deletePost(@Path("id") id: Long):Response<Unit>
+    suspend fun deletePost(@Path("id") id: Long): Response<Unit>
 
     @POST("posts/{id}/likes")
     suspend fun like(@Path("id") id: Long): Response<Post>

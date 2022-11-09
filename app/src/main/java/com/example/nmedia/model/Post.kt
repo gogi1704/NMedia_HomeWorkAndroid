@@ -16,7 +16,9 @@ data class Post(
     val shows: Long,
     val attachment: Attachment? = null,
     var likedByMe: Boolean = false,
-    val isSendToServer : Boolean = false
+    var isSendToServer : Boolean = false,
+    var isChecked : Boolean = false
+
 ) : Parcelable {
 
     fun showCounts(num: Long): String {

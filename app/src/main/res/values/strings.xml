@@ -13,4 +13,5 @@
     <string name="load_error">load error</string>
     <string name="list_is_empty">List is empty</string>
     <string name="retry">retry</string>
+    <string name="To_new_posts">To new posts</string>
 </resources>

@@ -8,6 +8,9 @@ import com.example.nmedia.db.AppDb
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
@@ -25,7 +28,8 @@ val emptyPost = Post(
     shows = 0,
     likedByMe = false,
     attachment = null,
-    isSendToServer = false
+    isSendToServer = false,
+    isChecked = false
 
 )
 var countErrorPost = -1L
@@ -38,12 +42,25 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val checkError = false
     val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
+
     private val _data: LiveData<FeedModel> = repository.data
-        .map { FeedModel(posts = it .filter { post -> !post.isSendToServer } + it.filter {  post -> post.isSendToServer })
-    }
+        .map {
+            FeedModel(posts = it.filter { post -> !post.isSendToServer } + it.filter { post -> post.isSendToServer })
+        }
+        .catch { e ->
+            e.printStackTrace()
+        }
+        .asLiveData(Dispatchers.Default)
 
     val data: LiveData<FeedModel>
         get() = _data
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
+            .catch { }
+            .asLiveData(Dispatchers.Default)
+    }
+
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -99,6 +116,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+     fun checkPosts() = viewModelScope.launch { repository.checkAllPosts() }
+
+
 
     fun savePost() {
         viewModelScope.launch {

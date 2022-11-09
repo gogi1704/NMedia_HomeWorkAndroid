@@ -7,6 +7,18 @@
 
     tools:context=".fragments.MainFragment">
 
+    <Button
+        android:id="@+id/button_UncheckedPosts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/To_new_posts"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="true" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_addPost"
         android:layout_width="wrap_content"
