@@ -57,7 +57,7 @@ class PostsAdapter(
 
                 if (post.attachment?.type == AttachmentType.IMAGE) {
                     attachmentContent.visibility = View.VISIBLE
-                    textTitleVideo.text = post.attachment.description
+                    textTitleVideo.text = post.attachment.url
                     imageAttachments.loadImage(post.attachment.url,imageAttachments,)
                 }else{
                     attachmentContent.visibility = View.GONE

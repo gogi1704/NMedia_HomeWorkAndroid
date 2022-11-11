@@ -14,10 +14,10 @@ data class Post(
     val likes: Long = 0,
     val shares: Long,
     val shows: Long,
-    val attachment: Attachment? = null,
     var likedByMe: Boolean = false,
     var isSendToServer : Boolean = false,
-    var isChecked : Boolean = false
+    var isChecked : Boolean = false,
+    val attachment: Attachment? = null,
 
 ) : Parcelable {
 

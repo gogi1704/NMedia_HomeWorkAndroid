@@ -1,12 +1,7 @@
 package com.example.nmedia.db.dao
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.nmedia.db.PostEntity
-import com.example.nmedia.model.Post
 import kotlinx.coroutines.flow.Flow
 
 
