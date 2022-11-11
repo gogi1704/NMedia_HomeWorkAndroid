@@ -47,8 +47,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     if (!post.isSendToServer) {
                         Snackbar.make(requireView(), "Send post to server ?", Snackbar.LENGTH_LONG)
                             .setAction("Send") {
-                                viewModel.editContent(post.content)
-                                viewModel.savePost()
+                               viewModel.savePostAfterError(post)
                             }
                             .show()
                     } else {
@@ -122,10 +121,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     .setAction("Retry") { viewModel.loadPost() }
                     .show()
                 ERROR_REMOVE -> Snackbar
-                    .make(requireView(), "Remove error.Please repeat", Snackbar.LENGTH_LONG)
+                    .make(requireView(), "Remove error. Check network and repeat", Snackbar.LENGTH_LONG)
                     .show()
                 ERROR_LIKE -> Snackbar
-                    .make(requireView(), "Like error.Please repeat", Snackbar.LENGTH_LONG)
+                    .make(requireView(), "Like error. Check network and repeat", Snackbar.LENGTH_LONG)
+                    .show()
+                ERROR_SAVE  -> Snackbar
+                    .make(requireView(), "Save error. Check network and repeat", Snackbar.LENGTH_LONG)
+                    .show()
+                ERROR_REPEAT_REQUEST  -> Snackbar
+                    .make(requireView(), "Repeat request error. Check network and repeat", Snackbar.LENGTH_LONG)
                     .show()
             }
 

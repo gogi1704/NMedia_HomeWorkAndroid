@@ -7,14 +7,12 @@ import com.example.nmedia.*
 import com.example.nmedia.db.AppDb
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
-import java.time.OffsetDateTime
 
 
 val emptyPost = Post(
@@ -29,7 +27,7 @@ val emptyPost = Post(
     likedByMe = false,
     attachment = null,
     isSendToServer = false,
-    isChecked = false
+    isChecked = true
 
 )
 var countErrorPost = -1L
@@ -117,23 +115,22 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-     fun checkPosts() = viewModelScope.launch { repository.checkAllPosts() }
-
+    fun checkPosts() = viewModelScope.launch { repository.checkAllPosts() }
 
 
     fun savePost() {
         viewModelScope.launch {
             try {
                 _postCreated.postValue(Unit)
-                repository.savePost(editedLiveData.value!!)
+                editedLiveData.value?.let { repository.savePost(it.copy(id = countErrorPost)) }
             } catch (e: Exception) {
-                _dataState.value = FeedModelState(errorType = ERROR_REMOVE)
+                _dataState.value = FeedModelState(errorType = ERROR_SAVE)
             }
             clearSharedPref()
         }
         countErrorPost--
-
         editedLiveData.value = emptyPost
+        countErrorPost--
     }
 
 
@@ -149,11 +146,26 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 return
             } else {
                 editedLiveData.value =
-                    editedLiveData.value?.copy(content = trimContent, id = countErrorPost)
+                    editedLiveData.value?.copy(
+                        content = trimContent,
+                        id = countErrorPost,
+                        isChecked = true
+                    )
             }
         }
     }
 
+    fun savePostAfterError(post: Post) {
+        viewModelScope.launch {
+            try {
+                repository.savePost(post)
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(errorType = ERROR_REPEAT_REQUEST)
+
+            }
+
+        }
+    }
 
     fun putSharedPref(string: String) {
         sharedPrefEditor.putString(DRAFT, string)
@@ -176,6 +188,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         return listPosts!![0]
     }
 
+
     private fun likePost(id: Long) {
         val listPost = _data.value?.posts?.toMutableList()
         val filteredList = _data.value?.posts?.filter {
@@ -191,7 +204,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         listPost?.set(index!!, post!!)
         listPost as List<Post>
-        //  _data.value = _data.value?.copy(posts = listPost)
     }
 
 
