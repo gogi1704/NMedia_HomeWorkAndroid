@@ -47,7 +47,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     if (!post.isSendToServer) {
                         Snackbar.make(requireView(), "Send post to server ?", Snackbar.LENGTH_LONG)
                             .setAction("Send") {
-                               viewModel.savePostAfterError(post)
+                                viewModel.savePostAfterError(post)
                             }
                             .show()
                     } else {
@@ -84,11 +84,21 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 }
 
-                override fun openVideo(post: Post) {
-                    if (post.attachment?.type == AttachmentType.VIDEO) {
-                        val webpage: Uri = Uri.parse(post.attachment.url)
-                        val intent = Intent(Intent.ACTION_VIEW, webpage)
-                        startActivity(intent)
+                override fun openAttachment(post: Post) {
+                    when (post.attachment?.type) {
+                        AttachmentType.VIDEO -> {
+                            val webpage: Uri = Uri.parse(post.attachment.url)
+                            val intent = Intent(Intent.ACTION_VIEW, webpage)
+                            startActivity(intent)
+                        }
+                        AttachmentType.IMAGE -> {
+                            findNavController().navigate(
+                                R.id.action_mainFragment_to_showImageFragment,
+                                Bundle().apply {
+                                    putString("url", post.attachment.url)
+                                })
+                        }
+                        else -> {}
                     }
 
                 }
@@ -121,16 +131,32 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     .setAction("Retry") { viewModel.loadPost() }
                     .show()
                 ERROR_REMOVE -> Snackbar
-                    .make(requireView(), "Remove error. Check network and repeat", Snackbar.LENGTH_LONG)
+                    .make(
+                        requireView(),
+                        "Remove error. Check network and repeat",
+                        Snackbar.LENGTH_LONG
+                    )
                     .show()
                 ERROR_LIKE -> Snackbar
-                    .make(requireView(), "Like error. Check network and repeat", Snackbar.LENGTH_LONG)
+                    .make(
+                        requireView(),
+                        "Like error. Check network and repeat",
+                        Snackbar.LENGTH_LONG
+                    )
                     .show()
-                ERROR_SAVE  -> Snackbar
-                    .make(requireView(), "Save error. Check network and repeat", Snackbar.LENGTH_LONG)
+                ERROR_SAVE -> Snackbar
+                    .make(
+                        requireView(),
+                        "Save error. Check network and repeat",
+                        Snackbar.LENGTH_LONG
+                    )
                     .show()
-                ERROR_REPEAT_REQUEST  -> Snackbar
-                    .make(requireView(), "Repeat request error. Check network and repeat", Snackbar.LENGTH_LONG)
+                ERROR_REPEAT_REQUEST -> Snackbar
+                    .make(
+                        requireView(),
+                        "Repeat request error. Check network and repeat",
+                        Snackbar.LENGTH_LONG
+                    )
                     .show()
             }
 
@@ -177,7 +203,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun createPostBundle(post: Post): Bundle {
-        println(post)
         return Bundle().apply {
             putLong(ID, post.id)
             putString(TITLE, post.author)

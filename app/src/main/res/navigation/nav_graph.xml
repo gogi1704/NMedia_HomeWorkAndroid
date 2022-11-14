@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainFragment_to_showPostFragment"
             app:destination="@id/showPostFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_showImageFragment"
+            app:destination="@id/showImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/createPostFragment"
@@ -53,4 +56,9 @@
             android:id="@+id/action_showPostFragment_to_mainFragment2"
             app:destination="@id/mainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/showImageFragment"
+        android:name="com.example.nmedia.fragments.ShowImageFragment"
+        android:label="fragment_show_image"
+        tools:layout="@layout/fragment_show_image" />
 </navigation>

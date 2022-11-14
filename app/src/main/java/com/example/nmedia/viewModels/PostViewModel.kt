@@ -2,9 +2,13 @@ package com.example.nmedia.viewModels
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
+import android.net.Uri
 import androidx.lifecycle.*
+import com.bumptech.glide.Glide.init
 import com.example.nmedia.*
 import com.example.nmedia.db.AppDb
+import com.example.nmedia.model.MediaUpload
+import com.example.nmedia.model.PhotoModel
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import java.io.File
 
 
 val emptyPost = Post(
@@ -30,6 +35,8 @@ val emptyPost = Post(
     isChecked = true
 
 )
+
+val noPhoto = PhotoModel()
 var countErrorPost = -1L
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -70,6 +77,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     val editedLiveData = MutableLiveData(emptyPost)
 
+    private val _photo = MutableLiveData(noPhoto)
+    val photo: LiveData<PhotoModel>
+        get() = _photo
+
 
     init {
         loadPost()
@@ -86,6 +97,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+    }
+
+    fun changePhoto(uri: Uri?, file: File?) {
+        _photo.value = PhotoModel(uri, file)
     }
 
 
@@ -122,7 +137,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 _postCreated.postValue(Unit)
-                editedLiveData.value?.let { repository.savePost(it.copy(id = countErrorPost)) }
+                when (_photo.value) {
+                    noPhoto -> editedLiveData.value?.let { repository.savePost(it.copy(id = countErrorPost)) }
+                    else -> _photo.value?.file?.let {
+                        repository.saveWithAttachments(editedLiveData.value!!, MediaUpload(it))
+                    }
+                }
+
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(errorType = ERROR_SAVE)
             }
@@ -130,7 +151,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         countErrorPost--
         editedLiveData.value = emptyPost
-        countErrorPost--
+        _photo.value = noPhoto
     }
 
 

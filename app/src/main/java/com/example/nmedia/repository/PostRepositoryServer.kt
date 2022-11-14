@@ -10,12 +10,14 @@ import com.example.nmedia.db.toEntity
 import com.example.nmedia.exceptions.ApiError
 import com.example.nmedia.exceptions.AppError
 import com.example.nmedia.exceptions.NetworkError
-import com.example.nmedia.model.Post
+import com.example.nmedia.model.*
 import com.example.nmedia.viewModels.PostRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 
 
@@ -32,7 +34,7 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
             }
             var body = response.body() ?: throw ApiError(response.code(), response.message())
             body = body.map {
-                it.copy(isSendToServer = true , isChecked = true)
+                it.copy(isSendToServer = true, isChecked = true)
             }
             dao.insert(body.toEntity())
         } catch (e: IOException) {
@@ -113,10 +115,10 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
             val response = PostApiServiceHolder.service.savePost(post.copy(id = 0))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
-            }else {
+            } else {
                 val body = response.body() ?: throw ApiError(response.code(), response.message())
                 dao.delete(post.id)
-                dao.insert(PostEntity.fromDto(body.copy(isSendToServer = true , isChecked = true)))
+                dao.insert(PostEntity.fromDto(body.copy(isSendToServer = true, isChecked = true)))
             }
 
         } catch (e: IOException) {
@@ -127,9 +129,39 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
 
     }
 
+    override suspend fun saveWithAttachments(post: Post, upload: MediaUpload) {
+        try {
+            val media = upLoad(upload)
+            val postWithAttachments =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            savePost(postWithAttachments)
+        } catch (e: IOException) {
+            throw NetworkError()
+        } catch (e: Exception) {
+            throw UnknownError()
+        }
+    }
+
+    override suspend fun upLoad(upload: MediaUpload): Media {
+        try {
+            val media = MultipartBody.Part.createFormData(
+                "file", upload.file.name, upload.file.asRequestBody()
+            )
+            val response = PostApiServiceHolder.service.upLoadImage(media)
+            if (!response.isSuccessful){
+                throw ApiError(response.code() , response.message())
+            }
+            return response.body() ?: throw ApiError(response.code(),response.message())
+        } catch (e: IOException) {
+            throw NetworkError()
+        } catch (e: Exception) {
+            throw UnknownError()
+        }
+    }
+
     suspend fun checkAllPosts() {
         val list = dao.getAll().filter {
-           !it.isChecked
+            !it.isChecked
         }
         dao.insert(list.map { it.copy(isChecked = true) })
     }

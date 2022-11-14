@@ -2,7 +2,9 @@ package com.example.nmedia.repository
 
 import com.example.nmedia.BASE_URL
 import com.example.nmedia.BuildConfig
+import com.example.nmedia.model.Media
 import com.example.nmedia.model.Post
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -39,6 +41,10 @@ interface PostsRetrofitService {
 
     @POST("posts")
     suspend fun savePost(@Body post: Post): Response<Post>
+
+    @Multipart
+    @POST("media")
+    suspend fun upLoadImage(@Part media: MultipartBody.Part): Response<Media>
 
     @DELETE("posts/{id}")
     suspend fun deletePost(@Path("id") id: Long): Response<Unit>

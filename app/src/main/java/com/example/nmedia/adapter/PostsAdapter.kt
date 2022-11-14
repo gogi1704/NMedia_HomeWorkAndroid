@@ -18,7 +18,7 @@ interface PostEventListener {
     fun share(post: Post)
     fun remove(post: Post)
     fun update(post: Post)
-    fun openVideo(post: Post)
+    fun openAttachment(post: Post)
     fun clickItemShowPost(post: Post)
 }
 
@@ -58,13 +58,13 @@ class PostsAdapter(
                 if (post.attachment?.type == AttachmentType.IMAGE) {
                     attachmentContent.visibility = View.VISIBLE
                     textTitleVideo.text = post.attachment.url
-                    imageAttachments.loadImage(post.attachment.url,imageAttachments,)
+                    imageAttachments.loadImage(post.attachment.url,)
                 }else{
                     attachmentContent.visibility = View.GONE
                 }
 
 
-                imageViewIcon.loadAvatar(post.authorAvatar, imageViewIcon)
+                imageViewIcon.loadAvatar(post.authorAvatar)
                 textTitle.text = post.author
                 textContent.text = post.content
                 textDate.text = post.published.toString()
@@ -74,7 +74,7 @@ class PostsAdapter(
                 buttonLike.isChecked = post.likedByMe
 
                 imageAttachments.setOnClickListener {
-                    listener.openVideo(post)
+                    listener.openAttachment(post)
                 }
 
                 buttonLike.setOnClickListener {
@@ -88,6 +88,8 @@ class PostsAdapter(
                 itemView.setOnClickListener {
                     clickItem(post)
                 }
+
+
 
 
 
