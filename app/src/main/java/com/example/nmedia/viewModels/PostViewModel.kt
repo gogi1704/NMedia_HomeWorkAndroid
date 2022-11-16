@@ -4,15 +4,19 @@ import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.net.Uri
 import androidx.lifecycle.*
+import androidx.lifecycle.Transformations.map
 import com.bumptech.glide.Glide.init
 import com.example.nmedia.*
+import com.example.nmedia.auth.AppAuth
 import com.example.nmedia.db.AppDb
 import com.example.nmedia.model.MediaUpload
 import com.example.nmedia.model.PhotoModel
 import com.example.nmedia.model.Post
 import com.example.nmedia.repository.PostRepositoryServer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
@@ -22,17 +26,19 @@ import java.io.File
 
 val emptyPost = Post(
     id = 0,
-    author = "Netology",
+    authorId = 0,
+    author = "",
     published = 12442341L,
     content = "content",
-    authorAvatar = "netology.jpg",
+    authorAvatar = "",
     likes = 0,
     shares = 0,
     shows = 0,
     likedByMe = false,
     attachment = null,
     isSendToServer = false,
-    isChecked = true
+    isChecked = true,
+    ownedByMe = false
 
 )
 
@@ -48,17 +54,24 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
 
-    private val _data: LiveData<FeedModel> = repository.data
-        .map {
-            FeedModel(posts = it.filter { post -> !post.isSendToServer } + it.filter { post -> post.isSendToServer })
-        }
-        .catch { e ->
-            e.printStackTrace()
-        }
-        .asLiveData(Dispatchers.Default)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _data: LiveData<FeedModel> = AppAuth.getInstance()
+        .authStateFlow
+        .flatMapLatest { (myId, _) ->
+            repository.data
+                .map { list ->
+                    FeedModel(posts = list.filter { post -> !post.isSendToServer }
+                        .map { it.copy(ownedByMe = myId == it.authorId) } +
+                            list.filter { post -> post.isSendToServer }
+                                .map { it.copy(ownedByMe = myId == it.authorId) })
+                }
+
+        }.asLiveData(Dispatchers.Default)
+
 
     val data: LiveData<FeedModel>
         get() = _data
+
 
     val newerCount: LiveData<Int> = data.switchMap {
         repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
@@ -80,6 +93,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<PhotoModel>
         get() = _photo
+
+
 
 
     init {

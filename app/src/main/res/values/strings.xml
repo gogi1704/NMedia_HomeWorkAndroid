@@ -15,5 +15,11 @@
     <string name="retry">retry</string>
     <string name="To_new_posts">To new posts</string>
     <string name="save">Save</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="signIn">Sign In</string>
+    <string name="signUp">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="name">Name</string>
 </resources>

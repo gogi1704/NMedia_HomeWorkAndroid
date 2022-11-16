@@ -12,6 +12,7 @@ import com.example.nmedia.model.Post
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
+    val authorId:Long,
     val author: String,
     val published: Long,
     val content: String,
@@ -28,10 +29,10 @@ data class PostEntity(
 
 
 ){
-    fun toDto() = Post(id, author, published ,content,authorAvatar,likes ,shares , shows,likedByMe , isSendToServer ,isChecked , attachments?.toDto())
+    fun toDto() = Post(id, authorId ,author, published ,content,authorAvatar,likes ,shares , shows,likedByMe , isSendToServer ,isChecked , attachments?.toDto())
 
     companion object {
-        fun fromDto(dto: Post) = PostEntity(dto.id, dto.author, dto.published, dto.content, dto.authorAvatar, dto.likes, dto.shares , dto.shows , dto.likedByMe,dto.isSendToServer ,dto.isChecked , AttachmentEmbeddable.fromDto(dto.attachment))
+        fun fromDto(dto: Post) = PostEntity(dto.id, dto.authorId, dto.author, dto.published, dto.content, dto.authorAvatar, dto.likes, dto.shares , dto.shows , dto.likedByMe,dto.isSendToServer ,dto.isChecked , AttachmentEmbeddable.fromDto(dto.attachment))
 
     }
 }

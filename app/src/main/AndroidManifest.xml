@@ -17,6 +17,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_netology_48_round"
         android:supportsRtl="true"
+        android:name=".application.NMediaApplication"
         android:theme="@style/Theme.NMedia"
         android:usesCleartextTraffic="${usesClearTextTraffic}"
         tools:targetApi="31">

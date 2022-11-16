@@ -49,6 +49,7 @@ class EditPostFragment : Fragment() {
                     viewModel.edit(
                         Post(
                             id = requireArguments().getLong(ID),
+                            authorId = requireArguments().getLong(AUTHOR_ID),
                             author = textTitle.text.toString(),
                             published = textDate.text.toString().toLong(),
                             content = text,

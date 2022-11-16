@@ -1,7 +1,8 @@
-package com.example.nmedia.viewModels
+package com.example.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.nmedia.auth.AuthState
 import com.example.nmedia.model.Media
 import com.example.nmedia.model.MediaUpload
 import com.example.nmedia.model.Post
@@ -14,10 +15,12 @@ interface PostRepository {
     fun share(id: Long)
     suspend fun remove(id: Long)
     suspend fun savePost(post: Post)
-    suspend fun saveWithAttachments(post: Post,upload:MediaUpload)
+    suspend fun saveWithAttachments(post: Post, upload: MediaUpload)
     suspend fun getAll()
     suspend fun upLoad(upload: MediaUpload): Media
-    fun getNewerCount(id: Long):Flow<Int>
+    suspend fun updateUser(login: String, pass: String): AuthState
+    suspend fun registerUser(login: String, pass: String , name:String): AuthState
+    fun getNewerCount(id: Long): Flow<Int>
 
 
 }

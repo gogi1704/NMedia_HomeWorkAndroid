@@ -1,6 +1,7 @@
 package com.example.nmedia
 
 const val ID = "id"
+const val AUTHOR_ID = "AUTHOR_ID"
 const val TITLE = "title"
 const val CONTENT = "content"
 const val DATE = "date"
@@ -26,3 +27,7 @@ const val ERROR_SAVE = "SAVE"
 const val ERROR_REMOVE = "REMOVE"
 const val ERROR_LOAD = "LOAD"
 const val ERROR_REPEAT_REQUEST = "ERROR_REPEAT_REQUEST"
+
+
+const val ERROR_SIGN_IN = "ERROR_SIGN_IN"
+const val ERROR_UNKNOWN = "ERROR_UNKNOWN"

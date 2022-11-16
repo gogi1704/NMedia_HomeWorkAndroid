@@ -1,8 +1,7 @@
 package com.example.nmedia.repository
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
+import com.example.nmedia.auth.AuthState
 import com.example.nmedia.db.PostEntity
 import com.example.nmedia.db.dao.PostDao
 import com.example.nmedia.db.toDto
@@ -11,8 +10,6 @@ import com.example.nmedia.exceptions.ApiError
 import com.example.nmedia.exceptions.AppError
 import com.example.nmedia.exceptions.NetworkError
 import com.example.nmedia.model.*
-import com.example.nmedia.viewModels.PostRepository
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -112,7 +109,7 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
     override suspend fun savePost(post: Post) {
         try {
             dao.insert(PostEntity.fromDto(post))
-            val response = PostApiServiceHolder.service.savePost(post.copy(id = 0))
+            val response = PostApiServiceHolder.service.savePost(post.copy(id = 0L))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             } else {
@@ -120,7 +117,6 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
                 dao.delete(post.id)
                 dao.insert(PostEntity.fromDto(body.copy(isSendToServer = true, isChecked = true)))
             }
-
         } catch (e: IOException) {
             throw NetworkError()
         } catch (e: Exception) {
@@ -148,16 +144,45 @@ class PostRepositoryServer(private val dao: PostDao) : PostRepository {
                 "file", upload.file.name, upload.file.asRequestBody()
             )
             val response = PostApiServiceHolder.service.upLoadImage(media)
-            if (!response.isSuccessful){
-                throw ApiError(response.code() , response.message())
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
             }
-            return response.body() ?: throw ApiError(response.code(),response.message())
+            return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError()
         } catch (e: Exception) {
             throw UnknownError()
         }
     }
+
+    override suspend fun updateUser(login: String, pass: String): AuthState {
+        try {
+            val response = PostApiServiceHolder.service.sigInUser(login, pass)
+            if (!response.isSuccessful) {
+                // throw ApiError(response.code(), response.message())
+            }
+            return response.body() ?: AuthState()
+        } catch (e: IOException) {
+            throw NetworkError()
+        } catch (e: Exception) {
+            throw UnknownError()
+        }
+    }
+
+    override suspend fun registerUser(login: String, pass: String, name: String): AuthState {
+        try {
+            val response = PostApiServiceHolder.service.registerUser(login, pass, name)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError()
+        } catch (e: Exception) {
+            throw UnknownError()
+        }
+    }
+
 
     suspend fun checkAllPosts() {
         val list = dao.getAll().filter {

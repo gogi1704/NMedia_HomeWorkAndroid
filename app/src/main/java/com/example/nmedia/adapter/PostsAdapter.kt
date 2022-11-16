@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
@@ -51,17 +52,19 @@ class PostsAdapter(
 
         fun bind(post: Post) {
             with(binding) {
-                if (!post.isSendToServer){
+                if (!post.isSendToServer) {
                     imageErrorSend.visibility = View.VISIBLE
-                }else imageErrorSend.visibility = View.GONE
+                } else imageErrorSend.visibility = View.GONE
 
                 if (post.attachment?.type == AttachmentType.IMAGE) {
                     attachmentContent.visibility = View.VISIBLE
                     textTitleVideo.text = post.attachment.url
-                    imageAttachments.loadImage(post.attachment.url,)
-                }else{
+                    imageAttachments.loadImage(post.attachment.url)
+                } else {
                     attachmentContent.visibility = View.GONE
                 }
+                buttonMore.visibility = if (post.ownedByMe == true) View.VISIBLE else View.INVISIBLE
+
 
 
                 imageViewIcon.loadAvatar(post.authorAvatar)
@@ -90,13 +93,10 @@ class PostsAdapter(
                 }
 
 
-
-
-
                 buttonMore.setOnClickListener {
                     PopupMenu(it.context, it).apply {
+                        menu.setGroupVisible(R.id.owned , post.ownedByMe == true)
                         inflate(R.menu.post_more)
-
                         setOnMenuItemClickListener { itemView ->
                             when (itemView.itemId) {
                                 R.id.remove -> {

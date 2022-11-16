@@ -17,6 +17,13 @@
     <string name="retry">Повторить</string>
     <string name="To_new_posts">К новым постам</string>
     <string name="save">Сохранить</string>
+    <string name="signIn">Войти</string>
+    <string name="signUp">Регистрация</string>
+    <string name="sign_out">Выйти</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="name">Имя</string>
 
 
 </resources>

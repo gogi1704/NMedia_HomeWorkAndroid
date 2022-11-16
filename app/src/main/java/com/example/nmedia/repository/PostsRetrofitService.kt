@@ -2,6 +2,8 @@ package com.example.nmedia.repository
 
 import com.example.nmedia.BASE_URL
 import com.example.nmedia.BuildConfig
+import com.example.nmedia.auth.AppAuth
+import com.example.nmedia.auth.AuthState
 import com.example.nmedia.model.Media
 import com.example.nmedia.model.Post
 import okhttp3.MultipartBody
@@ -23,6 +25,15 @@ private val logging = HttpLoggingInterceptor().apply {
 private val client = OkHttpClient.Builder()
     .connectTimeout(30, TimeUnit.SECONDS)
     .addInterceptor(logging)
+    .addInterceptor { chain ->
+        AppAuth.getInstance().authStateFlow.value.token?.let { token ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return@addInterceptor chain.proceed(newRequest)
+        }
+        chain.proceed(chain.request())
+    }
     .build()
 
 private val retrofit = Retrofit.Builder()
@@ -55,11 +66,26 @@ interface PostsRetrofitService {
     @DELETE("posts/{id}/likes")
     suspend fun disLike(@Path("id") id: Long): Response<Post>
 
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun sigInUser(
+        @Field("login") login: String,
+        @Field("pass") pass: String
+    ): Response<AuthState>
+
+    @FormUrlEncoded
+    @POST("users/registration")
+    suspend fun registerUser(
+        @Field("login") login: String,
+        @Field("pass") pass: String,
+        @Field("name") name: String
+    ): Response<AuthState>
+
 
 }
 
 object PostApiServiceHolder {
     val service: PostsRetrofitService by lazy {
-        retrofit.create()
+        retrofit.create(PostsRetrofitService::class.java)
     }
 }

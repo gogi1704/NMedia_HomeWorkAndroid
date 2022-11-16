@@ -23,6 +23,15 @@ import com.google.android.material.snackbar.Snackbar
 
 class CreatePostFragment : Fragment() {
 
+    companion object{
+        var isFragmentActive:Boolean = false
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        isFragmentActive = true
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,6 +82,7 @@ class CreatePostFragment : Fragment() {
                         }
                         true
                     }
+
 
                     else -> false
                 }
@@ -138,6 +148,11 @@ class CreatePostFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        isFragmentActive = false
+        super.onDestroy()
     }
 
 

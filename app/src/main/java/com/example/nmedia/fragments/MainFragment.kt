@@ -3,11 +3,9 @@ package com.example.nmedia.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,11 +17,14 @@ import com.example.nmedia.adapter.PostsAdapter
 import com.example.nmedia.databinding.FragmentMainBinding
 import com.example.nmedia.model.AttachmentType
 import com.example.nmedia.model.Post
+import com.example.nmedia.viewModels.AuthViewModel
+import com.example.nmedia.viewModels.LogInViewModel
 import com.example.nmedia.viewModels.PostViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class MainFragment : Fragment(R.layout.fragment_main) {
-    val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private lateinit var binding: FragmentMainBinding
     private lateinit var swipeToRefresh: SwipeRefreshLayout
 
@@ -32,7 +33,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.loadPost()
+        postViewModel.loadPost()
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
         swipeToRefresh = binding.refreshSwipe
         val recycler = binding.recyclerListPosts
@@ -40,14 +41,27 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         val adapter = PostsAdapter(
             object : PostEventListener {
                 override fun like(post: Post) {
-                    viewModel.like(post.id, post.likedByMe)
+                    if (authViewModel.authenticated) {
+                        postViewModel.like(post.id, post.likedByMe)
+                    } else {
+                        Snackbar.make(
+                            requireView(),
+                            "Please pass authorization",
+                            Snackbar.LENGTH_LONG
+                        )
+                            .setAction("Go") {
+                                findNavController().navigate(R.id.action_mainFragment_to_authFragment)
+                            }
+                            .show()
+                    }
+
                 }
 
                 override fun clickItemShowPost(post: Post) {
                     if (!post.isSendToServer) {
                         Snackbar.make(requireView(), "Send post to server ?", Snackbar.LENGTH_LONG)
                             .setAction("Send") {
-                                viewModel.savePostAfterError(post)
+                                postViewModel.savePostAfterError(post)
                             }
                             .show()
                     } else {
@@ -68,11 +82,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                         type = "text/plain"
                     }
                     startActivity(intent)
-                    viewModel.share(post.id)
+                    postViewModel.share(post.id)
                 }
 
                 override fun remove(post: Post) {
-                    viewModel.remove(post.id)
+                    postViewModel.remove(post.id)
                 }
 
                 override fun update(post: Post) {
@@ -107,19 +121,29 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         )
         recycler.adapter = adapter
-        binding.fabAddPost.setOnClickListener() {
-            findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
 
+
+
+        binding.fabAddPost.setOnClickListener() {
+            if (authViewModel.authenticated) {
+                findNavController().navigate(R.id.action_mainFragment_to_createPostFragment)
+            } else {
+                Snackbar.make(requireView(), "Please pass authorization", Snackbar.LENGTH_LONG)
+                    .setAction("Go") {
+                        findNavController().navigate(R.id.action_mainFragment_to_authFragment)
+                    }
+                    .show()
+            }
         }
 
         binding.buttonUncheckedPosts.setOnClickListener {
             binding.buttonUncheckedPosts.visibility = View.GONE
-            viewModel.checkPosts()
+            postViewModel.checkPosts()
             recycler.smoothScrollToPosition(0)
         }
 
 
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+        postViewModel.dataState.observe(viewLifecycleOwner) { state ->
             swipeToRefresh.isRefreshing = state.loading
             when (state.errorType) {
                 ERROR_LOAD -> Snackbar
@@ -128,7 +152,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                         "Loading error! Swipe to refresh or click ->",
                         Snackbar.LENGTH_LONG
                     )
-                    .setAction("Retry") { viewModel.loadPost() }
+                    .setAction("Retry") { postViewModel.loadPost() }
                     .show()
                 ERROR_REMOVE -> Snackbar
                     .make(
@@ -162,7 +186,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
+
+
+        postViewModel.newerCount.observe(viewLifecycleOwner) {
             with(binding) {
                 if (it != 0) {
                     buttonUncheckedPosts.visibility = View.VISIBLE
@@ -171,20 +197,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
+        postViewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.textIsEmpty.isVisible = state.isEmpty
         }
 
 
-        viewModel.errorCreateFragmentLiveData.observe(viewLifecycleOwner) {
+        postViewModel.errorCreateFragmentLiveData.observe(viewLifecycleOwner) {
             if (it) {
                 MyDialogFragmentCreatePostError().show(parentFragmentManager, "create")
             }
         }
 
 
-        viewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
+        postViewModel.editedLiveData.observe(viewLifecycleOwner) { editPost ->
 
             if (editPost.id == -1L) {
                 return@observe
@@ -196,7 +222,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         swipeToRefresh.setOnRefreshListener {
             swipeToRefresh.isRefreshing = false
-            viewModel.loadPost()
+            postViewModel.loadPost()
         }
 
         return binding.root
@@ -205,6 +231,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private fun createPostBundle(post: Post): Bundle {
         return Bundle().apply {
             putLong(ID, post.id)
+            putLong(AUTHOR_ID, post.authorId)
             putString(TITLE, post.author)
             putString(CONTENT, post.content)
             putString(DATE, post.published.toString())
