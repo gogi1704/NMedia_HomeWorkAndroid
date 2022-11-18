@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.nmedia.R
+import com.example.nmedia.auth.AppAuth
 import com.example.nmedia.model.Like
 import com.example.nmedia.model.Post
 import com.example.nmedia.model.Share
@@ -21,6 +22,15 @@ enum class Action {
     SHARE,
     NEW_POST
 }
+
+data class PushToken(
+    val token: String
+)
+
+data class PushMessage(
+    val recipientId: Long?,
+    val content: String,
+)
 
 
 const val channelId = "1"
@@ -46,30 +56,51 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
         try {
-            message.data[action]?.let {
-                when (Action.valueOf(it)) {
-                    Action.LIKE -> handleLike(
-                        gson.fromJson(
-                            message.data[content],
-                            Like::class.java
-                        )
-                    )
-                    Action.SHARE -> handleShare(
-                        gson.fromJson(
-                            message.data[content],
-                            Share::class.java
-                        )
-                    )
-                    Action.NEW_POST -> handleNewPost(
-                        gson.fromJson(
-                            message.data[content],
-                            Post::class.java
-                        )
-                    )
-                }
+            val inputPush = gson.fromJson(message.data[content], PushMessage::class.java)
+
+            if (inputPush.recipientId == AppAuth.getInstance().authStateFlow.value.id || inputPush.recipientId == null) {
+// default notification
+                val push = NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(inputPush.content)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .build()
+
+                NotificationManagerCompat.from(this)
+                    .notify(1000, push)
+
+//                message.data[action]?.let {
+//                    when (Action.valueOf(it)) {
+//                        Action.LIKE -> handleLike(
+//                            gson.fromJson(
+//                                message.data[content],
+//                                Like::class.java
+//                            )
+//                        )
+//                        Action.SHARE -> handleShare(
+//                            gson.fromJson(
+//                                message.data[content],
+//                                Share::class.java
+//                            )
+//                        )
+//                        Action.NEW_POST -> handleNewPost(
+//                            gson.fromJson(
+//                                message.data[content],
+//                                Post::class.java
+//                            )
+//                        )
+//
+//                    }
+//                }
+            } else if (inputPush.recipientId == 0L
+                || inputPush.recipientId != 0L
+                && inputPush.recipientId == AppAuth.getInstance().authStateFlow.value.id
+            ) {
+                AppAuth.getInstance().sendPushToken()
             }
+
+
         } catch (e: IllegalArgumentException) {
             println("IllegalArgumentException")
             return
@@ -78,8 +109,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        println(token)
+        AppAuth.getInstance().sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {

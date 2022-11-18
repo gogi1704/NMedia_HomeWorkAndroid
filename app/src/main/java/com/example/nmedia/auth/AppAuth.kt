@@ -2,9 +2,17 @@ package com.example.nmedia.auth
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.nmedia.repository.PostApiServiceHolder
+import com.example.nmedia.service.PushToken
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class AppAuth private constructor(context: Context) {
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
@@ -28,8 +36,10 @@ class AppAuth private constructor(context: Context) {
         } else {
             _authStateFlow = MutableStateFlow(AuthState(id, token))
         }
+        sendPushToken()
 
     }
+
     val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
 
 
@@ -41,6 +51,7 @@ class AppAuth private constructor(context: Context) {
             putString(tokenKey, token)
             apply()
         }
+        sendPushToken()
     }
 
     @Synchronized
@@ -50,10 +61,25 @@ class AppAuth private constructor(context: Context) {
             clear()
             commit()
         }
+        sendPushToken()
     }
 
-    fun isAuth():Boolean{
+    fun isAuth(): Boolean {
         return _authStateFlow.value != AuthState()
+    }
+
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val pushToken = PushToken(token ?: Firebase.messaging.token.await())
+                PostApiServiceHolder.service.sendPushToken(pushToken)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+
+        }
+
     }
 
     companion object {
@@ -72,6 +98,7 @@ class AppAuth private constructor(context: Context) {
     }
 }
 
-data class AuthState(val id: Long = 0, val token: String? = null)
+data class AuthState(val id: Long = -1L, val token: String? = null)
+
 const val OPEN_REGISTER_FRAGMENT_KEY = "OPEN_REGISTER_FRAGMENT"
 const val OPEN_REGISTER_FRAGMENT_VALUE = "REGISTER"

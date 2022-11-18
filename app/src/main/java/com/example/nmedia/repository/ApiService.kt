@@ -6,6 +6,7 @@ import com.example.nmedia.auth.AppAuth
 import com.example.nmedia.auth.AuthState
 import com.example.nmedia.model.Media
 import com.example.nmedia.model.Post
+import com.example.nmedia.service.PushToken
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -52,6 +53,9 @@ interface PostsRetrofitService {
 
     @POST("posts")
     suspend fun savePost(@Body post: Post): Response<Post>
+
+    @POST("users/push-tokens")
+    suspend fun sendPushToken(@Body token: PushToken): Response<Unit>
 
     @Multipart
     @POST("media")
