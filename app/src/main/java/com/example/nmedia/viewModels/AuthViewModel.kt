@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.example.nmedia.auth.AppAuth
 import com.example.nmedia.auth.AuthState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-
-class AuthViewModel : ViewModel() {
-    val data: LiveData<AuthState> = AppAuth.getInstance().authStateFlow
+import javax.inject.Inject
+@HiltViewModel
+class AuthViewModel @Inject constructor(private val appAuth: AppAuth) : ViewModel() {
+    val data: LiveData<AuthState> =appAuth.authStateFlow
         .asLiveData(Dispatchers.Default)
     val authenticated:Boolean
-    get()  = AppAuth.getInstance().isAuth()
+    get()  = appAuth.isAuth()
 
 }

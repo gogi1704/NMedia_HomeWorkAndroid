@@ -5,14 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
 import com.example.nmedia.databinding.FragmentEditPostBinding
 import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class EditPostFragment : Fragment() {
 
     override fun onCreateView(
@@ -22,7 +24,7 @@ class EditPostFragment : Fragment() {
     ): View {
 
         val binding = FragmentEditPostBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel: PostViewModel by activityViewModels()
 
 
             with(binding) {

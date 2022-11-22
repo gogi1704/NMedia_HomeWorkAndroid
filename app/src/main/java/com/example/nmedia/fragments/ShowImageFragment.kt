@@ -11,7 +11,9 @@ import com.example.nmedia.R
 import com.example.nmedia.databinding.FragmentShowImageBinding
 import com.example.nmedia.viewModels.loadFitCenter
 import com.example.nmedia.viewModels.loadImage
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ShowImageFragment : Fragment() {
     lateinit var binding: FragmentShowImageBinding
 

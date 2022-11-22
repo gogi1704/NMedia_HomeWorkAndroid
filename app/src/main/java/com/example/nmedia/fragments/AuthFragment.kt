@@ -6,22 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
 import com.example.nmedia.auth.OPEN_REGISTER_FRAGMENT_KEY
 import com.example.nmedia.databinding.FragmentAuthBinding
 import com.example.nmedia.viewModels.LogInViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class AuthFragment : Fragment() {
 
     private lateinit var binding: FragmentAuthBinding
-    private val viewModel: LogInViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val viewModel: LogInViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        isFragmentActive = true
+        fragmentId = findNavController().currentDestination?.id!!
         requireActivity().invalidateMenu()
         super.onCreate(savedInstanceState)
     }
@@ -103,12 +104,13 @@ class AuthFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        isFragmentActive = false
+        fragmentId = 0
         super.onDestroy()
     }
 
     companion object {
-        var isFragmentActive = false
+        var fragmentId = 0
+
     }
 
 

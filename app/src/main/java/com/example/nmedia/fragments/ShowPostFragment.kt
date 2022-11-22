@@ -7,13 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.*
 import com.example.nmedia.databinding.FragmentShowPostBinding
 import com.example.nmedia.viewModels.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ShowPostFragment : Fragment() {
 
     override fun onCreateView(
@@ -21,7 +23,7 @@ class ShowPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentShowPostBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel: PostViewModel by activityViewModels()
 
 
         with(binding) {

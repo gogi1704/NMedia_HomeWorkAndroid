@@ -1,12 +1,12 @@
 package com.example.nmedia.fragments
 
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.example.nmedia.R
 import com.example.nmedia.auth.AppAuth
@@ -14,16 +14,26 @@ import com.example.nmedia.auth.OPEN_REGISTER_FRAGMENT_KEY
 import com.example.nmedia.auth.OPEN_REGISTER_FRAGMENT_VALUE
 import com.example.nmedia.databinding.ActivityMainBinding
 import com.example.nmedia.viewModels.AuthViewModel
+import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var auth: AppAuth
+
     private lateinit var binding: ActivityMainBinding
-    private val authViewModel = AuthViewModel()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         authViewModel.data.observe(this) {
             invalidateMenu()
@@ -32,9 +42,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        if (AuthFragment.isFragmentActive) {
+        if (findNavController(R.id.nav_host_fragment).currentDestination?.id == AuthFragment.fragmentId) {
+
             menu.let {
                 it?.setGroupVisible(R.id.authenticated_true, false)
                 it?.setGroupVisible(R.id.authenticated_false, false)
@@ -46,7 +58,6 @@ class MainActivity : AppCompatActivity() {
                 it?.setGroupVisible(R.id.authenticated_false, !authViewModel.authenticated)
             }
         }
-
         return true
     }
 
@@ -67,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.signOut -> {
-                if (CreatePostFragment.isFragmentActive) {
+                if (findNavController(R.id.nav_host_fragment).currentDestination?.id == CreatePostFragment.fragmentId) {
                     AlertDialog.Builder(this)
                         .setTitle("Warning")
                         .setMessage("Are you sure?")
@@ -76,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                             "Yes"
                         ) { dialog, which ->
                             findNavController(R.id.nav_host_fragment).navigateUp()
-                            AppAuth.getInstance().removeAuth()
+                            auth.removeAuth()
                         }
                         .setNegativeButton("Back")
                         { dialog, wich ->
@@ -84,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         .create()
                         .show()
-                } else AppAuth.getInstance().removeAuth()
+                } else auth.removeAuth()
 
                 true
             }

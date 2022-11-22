@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.AndroidUtils
@@ -20,15 +21,17 @@ import com.example.nmedia.viewModels.PostViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CreatePostFragment : Fragment() {
 
     companion object{
-        var isFragmentActive:Boolean = false
+        var fragmentId = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        isFragmentActive = true
+        fragmentId = findNavController().currentDestination?.id!!
         super.onCreate(savedInstanceState)
     }
 
@@ -38,7 +41,7 @@ class CreatePostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentCreatePostBinding.inflate(layoutInflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel: PostViewModel by activityViewModels()
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -151,7 +154,7 @@ class CreatePostFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        isFragmentActive = false
+        fragmentId = 0
         super.onDestroy()
     }
 

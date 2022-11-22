@@ -2,10 +2,7 @@ package com.example.nmedia.application
 
 import android.app.Application
 import com.example.nmedia.auth.AppAuth
+import dagger.hilt.android.HiltAndroidApp
 
-class NMediaApplication: Application() {
-    override fun onCreate() {
-        AppAuth.initApp(this)
-        super.onCreate()
-    }
-}
+@HiltAndroidApp
+class NMediaApplication: Application()

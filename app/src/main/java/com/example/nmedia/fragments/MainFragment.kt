@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,13 +19,15 @@ import com.example.nmedia.databinding.FragmentMainBinding
 import com.example.nmedia.model.AttachmentType
 import com.example.nmedia.model.Post
 import com.example.nmedia.viewModels.AuthViewModel
-import com.example.nmedia.viewModels.LogInViewModel
 import com.example.nmedia.viewModels.PostViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
-    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-    private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
+    private val postViewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
     private lateinit var swipeToRefresh: SwipeRefreshLayout
 

@@ -12,7 +12,9 @@ import com.example.nmedia.db.AppDb
 import com.example.nmedia.model.MediaUpload
 import com.example.nmedia.model.PhotoModel
 import com.example.nmedia.model.Post
-import com.example.nmedia.repository.PostRepositoryServer
+import com.example.nmedia.repository.PostRepository
+import com.example.nmedia.repository.PostRepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import java.io.File
+import javax.inject.Inject
 
 
 val emptyPost = Post(
@@ -45,17 +48,19 @@ val emptyPost = Post(
 val noPhoto = PhotoModel()
 var countErrorPost = -1L
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    application: Application, private val repository: PostRepository, private val auth: AppAuth
+) : AndroidViewModel(application) {
     private val sharedPrefDraft = application.getSharedPreferences("draft", MODE_PRIVATE)
     private val sharedPrefEditor = sharedPrefDraft.edit()
-    private val repository = PostRepositoryServer(AppDb.getInstance(application).postDao)
 
     private val checkError = false
     val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val _data: LiveData<FeedModel> = AppAuth.getInstance()
+    private val _data: LiveData<FeedModel> = auth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
             repository.data
@@ -93,8 +98,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<PhotoModel>
         get() = _photo
-
-
 
 
     init {

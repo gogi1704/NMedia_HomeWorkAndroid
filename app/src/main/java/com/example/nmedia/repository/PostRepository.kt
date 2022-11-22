@@ -19,7 +19,9 @@ interface PostRepository {
     suspend fun getAll()
     suspend fun upLoad(upload: MediaUpload): Media
     suspend fun updateUser(login: String, pass: String): AuthState
-    suspend fun registerUser(login: String, pass: String , name:String): AuthState
+    suspend fun registerUser(login: String, pass: String, name: String): AuthState
+
+    suspend fun checkAllPosts()
     fun getNewerCount(id: Long): Flow<Int>
 
 

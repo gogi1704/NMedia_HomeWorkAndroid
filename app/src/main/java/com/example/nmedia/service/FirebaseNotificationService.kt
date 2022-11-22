@@ -14,7 +14,9 @@ import com.example.nmedia.model.Share
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalArgumentException
+import javax.inject.Inject
 import kotlin.random.Random
 
 enum class Action {
@@ -35,9 +37,12 @@ data class PushMessage(
 
 const val channelId = "1"
 
-class FirebaseNotificationService : FirebaseMessagingService() {
+@AndroidEntryPoint
+class FirebaseNotificationService () : FirebaseMessagingService() {
 
-    private val action = "action"
+    @Inject
+    lateinit var auth: AppAuth
+
     private val content = "content"
     private val gson = Gson()
 
@@ -59,7 +64,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             val inputPush = gson.fromJson(message.data[content], PushMessage::class.java)
 
-            if (inputPush.recipientId == AppAuth.getInstance().authStateFlow.value.id || inputPush.recipientId == null) {
+            if (inputPush.recipientId == auth.authStateFlow.value.id || inputPush.recipientId == null) {
 // default notification
                 val push = NotificationCompat.Builder(this, channelId)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -95,9 +100,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //                }
             } else if (inputPush.recipientId == 0L
                 || inputPush.recipientId != 0L
-                && inputPush.recipientId == AppAuth.getInstance().authStateFlow.value.id
+                && inputPush.recipientId == auth.authStateFlow.value.id
             ) {
-                AppAuth.getInstance().sendPushToken()
+                auth.sendPushToken()
             }
 
 
@@ -109,7 +114,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+        auth.sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {

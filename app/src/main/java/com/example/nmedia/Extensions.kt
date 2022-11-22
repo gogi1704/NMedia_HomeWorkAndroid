@@ -2,12 +2,8 @@ package com.example.nmedia.viewModels
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.example.nmedia.BASE_URL
 import com.example.nmedia.BASE_URL_IMAGES
 import com.example.nmedia.R
-import com.example.nmedia.model.Attachment
 
 fun ImageView.loadAvatar(url: String) {
     Glide.with(this)
