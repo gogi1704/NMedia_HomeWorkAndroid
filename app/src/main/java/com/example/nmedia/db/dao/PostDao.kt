@@ -1,14 +1,19 @@
 package com.example.nmedia.db.dao
 
+import android.content.ClipData
 import androidx.room.*
 import com.example.nmedia.db.PostEntity
+import com.example.nmedia.model.Post
 import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-   suspend  fun getAll(): List<PostEntity>
+    suspend fun getAll(): List<PostEntity>
+
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun getPagedList(limit: Int, offset: Int): List<PostEntity>
 
     @Query("SELECT * FROM PostEntity WHERE isChecked = 1  ORDER BY id DESC ")
     fun getAllChecked(): Flow<List<PostEntity>>

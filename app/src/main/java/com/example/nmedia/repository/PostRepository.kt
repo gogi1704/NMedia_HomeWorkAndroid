@@ -2,6 +2,7 @@ package com.example.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingData
 import com.example.nmedia.auth.AuthState
 import com.example.nmedia.model.Media
 import com.example.nmedia.model.MediaUpload
@@ -11,6 +12,7 @@ import okhttp3.Callback
 
 interface PostRepository {
     val data: Flow<List<Post>>
+    val pagingData: Flow<PagingData<Post>>
     suspend fun like(id: Long, isLiked: Boolean)
     fun share(id: Long)
     suspend fun remove(id: Long)

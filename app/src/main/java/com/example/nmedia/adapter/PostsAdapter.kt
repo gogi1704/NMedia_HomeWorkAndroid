@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nmedia.R
@@ -27,7 +28,7 @@ interface PostEventListener {
 class PostsAdapter(
     private val listener: PostEventListener
 
-) : ListAdapter<Post, PostsAdapter.PostsViewHolder>(PostDiffCallback()) {
+) : PagingDataAdapter<Post, PostsAdapter.PostsViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding =
@@ -38,7 +39,7 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
         val post = getItem(position)
-        holder.bind(post)
+        holder.bind(post!!)
 
 
     }

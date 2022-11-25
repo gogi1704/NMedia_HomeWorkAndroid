@@ -5,6 +5,9 @@ import android.content.Context.MODE_PRIVATE
 import android.net.Uri
 import androidx.lifecycle.*
 import androidx.lifecycle.Transformations.map
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import com.bumptech.glide.Glide.init
 import com.example.nmedia.*
 import com.example.nmedia.auth.AppAuth
@@ -59,6 +62,15 @@ class PostViewModel @Inject constructor(
     val errorCreateFragmentLiveData = MutableLiveData(checkError)
 
 
+    val pagingData = auth.authStateFlow.flatMapLatest { (myId, _) ->
+        repository.pagingData.map { posts ->
+            posts.map {
+                it.copy(ownedByMe = it.authorId == myId)
+            }
+        }
+    }.cachedIn(viewModelScope)
+
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _data: LiveData<FeedModel> = auth
         .authStateFlow
@@ -103,6 +115,7 @@ class PostViewModel @Inject constructor(
     init {
         loadPost()
     }
+
 
     fun loadPost() {
         viewModelScope.launch {

@@ -1,45 +1,14 @@
 package com.example.nmedia.api
 
-import com.example.nmedia.BuildConfig
-import com.example.nmedia.auth.AppAuth
+
 import com.example.nmedia.auth.AuthState
 import com.example.nmedia.model.Media
 import com.example.nmedia.model.Post
 import com.example.nmedia.service.PushToken
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.util.concurrent.TimeUnit
-//
-//private val logging = HttpLoggingInterceptor().apply {
-//    if (BuildConfig.DEBUG) {
-//        level = HttpLoggingInterceptor.Level.BODY
-//    }
-//}
-//
-//private val client = OkHttpClient.Builder()
-//    .connectTimeout(30, TimeUnit.SECONDS)
-//    .addInterceptor(logging)
-//    .addInterceptor { chain ->
-//        AppAuth.getInstance().authStateFlow.value.token?.let { token ->
-//            val newRequest = chain.request().newBuilder()
-//                .addHeader("Authorization", token)
-//                .build()
-//            return@addInterceptor chain.proceed(newRequest)
-//        }
-//        chain.proceed(chain.request())
-//    }
-//    .build()
-//
-//private val retrofit = Retrofit.Builder()
-//    .addConverterFactory(GsonConverterFactory.create())
-//    .client(client)
-//    .baseUrl(BASE_URL)
-//    .build()
+
 
 
 interface PostsRetrofitService {

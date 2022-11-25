@@ -1,6 +1,10 @@
 package com.example.nmedia.repository
 
 import androidx.lifecycle.asLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.filter
+import androidx.paging.map
 import com.example.nmedia.api.PostsRetrofitService
 import com.example.nmedia.auth.AuthState
 import com.example.nmedia.db.PostEntity
@@ -23,6 +27,20 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao, private val apiService: PostsRetrofitService
 ) : PostRepository {
+
+    override val pagingData = Pager(
+        PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = false,
+            initialLoadSize = 10
+        ), pagingSourceFactory = { PostPagingSource(dao) }
+    ).flow
+        .map {posts->
+            posts.filter { post ->
+                post.isChecked
+            }
+
+        }
 
     override val data = dao.getAllChecked()
         .map { it.toDto() }
@@ -189,7 +207,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
 
-  override  suspend fun checkAllPosts() {
+    override suspend fun checkAllPosts() {
         val list = dao.getAll().filter {
             !it.isChecked
         }

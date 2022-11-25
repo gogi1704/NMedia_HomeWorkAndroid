@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.nmedia.*
@@ -22,6 +23,7 @@ import com.example.nmedia.viewModels.AuthViewModel
 import com.example.nmedia.viewModels.PostViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
@@ -40,6 +42,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
         swipeToRefresh = binding.refreshSwipe
         val recycler = binding.recyclerListPosts
+
 
         val adapter = PostsAdapter(
             object : PostEventListener {
@@ -143,6 +146,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             binding.buttonUncheckedPosts.visibility = View.GONE
             postViewModel.checkPosts()
             recycler.smoothScrollToPosition(0)
+            adapter.refresh()
         }
 
 
@@ -199,9 +203,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
         }
+        //paging
+        lifecycleScope.launchWhenCreated {
+            postViewModel.pagingData.collectLatest {
+                adapter.submitData(it)
+            }
+        }
 
         postViewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
             binding.textIsEmpty.isVisible = state.isEmpty
         }
 
@@ -224,8 +233,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
 
         swipeToRefresh.setOnRefreshListener {
+            postViewModel.checkPosts()
+            adapter.refresh()
             swipeToRefresh.isRefreshing = false
-            postViewModel.loadPost()
         }
 
         return binding.root
